@@ -280,6 +280,24 @@ export default function SurveyPage() {
     }
   };
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === '1') {
+        setSelectedChoice(questions[currentQuestion].choices[0]);
+      } else if (e.key === '2') {
+        setSelectedChoice(questions[currentQuestion].choices[1]);
+      } else if (e.key === 'Enter' && selectedChoice !== null) {
+        handleNext();
+      } else if (e.key === 'Escape') {
+        router.push('/');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [selectedChoice, currentQuestion, router]);
+
   const calculateAndRedirect = async (finalAnswers) => {
     setIsSubmitting(true);
     
@@ -311,13 +329,14 @@ export default function SurveyPage() {
       
       localStorage.setItem(`mbti-result-${resultId}`, JSON.stringify(resultData));
       
-      // 結果ページにリダイレクト
-      router.push(`/result/${resultId}`);
+      // 2秒後に自動的に結果ページにリダイレクト
+      setTimeout(() => {
+        router.push(`/result/${resultId}`);
+      }, 2000);
       
     } catch (error) {
       console.error('Error calculating results:', error);
       alert('結果計算でエラーが発生しました。再試行してください。');
-    } finally {
       setIsSubmitting(false);
     }
   };

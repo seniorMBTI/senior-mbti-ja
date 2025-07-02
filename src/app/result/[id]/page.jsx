@@ -1,18 +1,15 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useLanguage } from '../../../contexts/LanguageContext';
 import { useState, useEffect } from 'react';
-import LanguageSelector from '../../../components/LanguageSelector';
 
 export default function ResultPage() {
   const params = useParams();
   const router = useRouter();
-  const { t, language } = useLanguage();
-  const [activeTab, setActiveTab] = useState('overview');
-  const [showShareDialog, setShowShareDialog] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [resultData, setResultData] = useState(null);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [showCopySuccess, setShowCopySuccess] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -27,584 +24,1060 @@ export default function ResultPage() {
     }
   }, [params.id]);
 
-  // 完全な16のMBTIタイプの詳細分析
+  // MBTIタイプ別相性情報
+  const mbtiCompatibility = {
+    'INTJ': {
+      bestMatch: ['ENFP', 'ENTP', 'INFJ'],
+      goodMatch: ['INTJ', 'INFP', 'ENTJ'],
+      challengingMatch: ['ESFJ', 'ISFJ', 'ESTJ']
+    },
+    'INTP': {
+      bestMatch: ['ENFJ', 'ENTJ', 'INFJ'],
+      goodMatch: ['INTP', 'ENTP', 'INTJ'],
+      challengingMatch: ['ESFJ', 'ISFJ', 'ESTJ']
+    },
+    'ENTJ': {
+      bestMatch: ['INFP', 'INTP', 'ENFP'],
+      goodMatch: ['ENTJ', 'INTJ', 'ENTP'],
+      challengingMatch: ['ISFP', 'INFP', 'ESFP']
+    },
+    'ENTP': {
+      bestMatch: ['INFJ', 'INTJ', 'ENFJ'],
+      goodMatch: ['ENTP', 'ENFP', 'ENTJ'],
+      challengingMatch: ['ISTJ', 'ISFJ', 'ESTJ']
+    },
+    'INFJ': {
+      bestMatch: ['ENTP', 'ENFP', 'INTJ'],
+      goodMatch: ['INFJ', 'INFP', 'ENFJ'],
+      challengingMatch: ['ESTP', 'ESFP', 'ISTP']
+    },
+    'INFP': {
+      bestMatch: ['ENFJ', 'ENTJ', 'ENFP'],
+      goodMatch: ['INFP', 'INFJ', 'ISFP'],
+      challengingMatch: ['ESTJ', 'ENTJ', 'ESTP']
+    },
+    'ENFJ': {
+      bestMatch: ['INFP', 'ISFP', 'INTP'],
+      goodMatch: ['ENFJ', 'ENFP', 'INFJ'],
+      challengingMatch: ['ISTP', 'ESTP', 'ISTJ']
+    },
+    'ENFP': {
+      bestMatch: ['INTJ', 'INFJ', 'ENFJ'],
+      goodMatch: ['ENFP', 'ENTP', 'INFP'],
+      challengingMatch: ['ISTJ', 'ESTJ', 'ISTP']
+    },
+    'ISTJ': {
+      bestMatch: ['ESFP', 'ESTP', 'ISFP'],
+      goodMatch: ['ISTJ', 'ISFJ', 'ESTJ'],
+      challengingMatch: ['ENFP', 'ENTP', 'INFP']
+    },
+    'ISFJ': {
+      bestMatch: ['ESFP', 'ESTP', 'ENFP'],
+      goodMatch: ['ISFJ', 'ISTJ', 'ESFJ'],
+      challengingMatch: ['ENTP', 'ENTJ', 'INTP']
+    },
+    'ESTJ': {
+      bestMatch: ['ISFP', 'INFP', 'ISTP'],
+      goodMatch: ['ESTJ', 'ISTJ', 'ESFJ'],
+      challengingMatch: ['INFP', 'ENFP', 'INTP']
+    },
+    'ESFJ': {
+      bestMatch: ['ISFP', 'INFP', 'ISTP'],
+      goodMatch: ['ESFJ', 'ISFJ', 'ESTJ'],
+      challengingMatch: ['INTP', 'INTJ', 'ENTP']
+    },
+    'ISTP': {
+      bestMatch: ['ESFJ', 'ESTJ', 'ENFJ'],
+      goodMatch: ['ISTP', 'ESTP', 'ISFP'],
+      challengingMatch: ['ENFJ', 'INFJ', 'ENFP']
+    },
+    'ISFP': {
+      bestMatch: ['ENFJ', 'ESFJ', 'ESTJ'],
+      goodMatch: ['ISFP', 'INFP', 'ESFP'],
+      challengingMatch: ['ENTJ', 'ESTJ', 'ENTP']
+    },
+    'ESTP': {
+      bestMatch: ['ISFJ', 'ISTJ', 'INFJ'],
+      goodMatch: ['ESTP', 'ESFP', 'ISTP'],
+      challengingMatch: ['INFJ', 'INTJ', 'INFP']
+    },
+    'ESFP': {
+      bestMatch: ['ISTJ', 'ISFJ', 'INTJ'],
+      goodMatch: ['ESFP', 'ENFP', 'ISFP'],
+      challengingMatch: ['INTJ', 'ENTJ', 'INTP']
+    }
+  };
+
+  // 完全な16個のMBTIタイプデータ
   const mbtiTypes = {
     'INTJ': {
       type: 'INTJ',
-      title: 'シニア戦略設計者',
+      title: 'シニア戦略的設計者',
       subtitle: '未来を見通す知恵深い戦略家',
+      description: '長い人生経験から培われた知恵をもとに、体系的で論理的な思考をお持ちになり、未来を見通す洞察力をお持ちでいらっしゃいます。',
+      strengths: ['優れた戦略的思考力', '独立した判断力', '体系的な計画立案能力', '深い洞察力', '目標指向の実行力'],
+      challenges: ['完璧主義的傾向', '感情表現の困難さ', '批判的な視点', '変化への抵抗'],
+      careers: ['コンサルタント', '研究者', '企画者', '作家', '投資専門家'],
+      relationships: '信頼できる少数の方との深い関係をお好みになり、知的な交流を重要視されます。',
+      seniorTips: ['定期的な知的活動で脳の健康を維持してください', '読書と学習で認知機能を保ってください', '長期計画を立てて目標を実現してください', '同じ志を持つ方々と深いつながりを築いてください'],
+      healthTips: ['規則的な読書で認知機能を維持してください', '適度な運動で血液循環を改善してください', '十分な睡眠で脳の健康を保ってください', '社交活動で精神的健康を維持してください'],
       emoji: '🔮',
       color: '#6366f1',
-      bgGradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      description: '豊富な人生経験から培った知恵に基づき、体系的で論理的な思考を持ち、未来を見通す卓越した洞察力をお持ちです。',
-      strengths: ['優れた戦略的思考', '独立した判断力', '体系的計画立案', '深い洞察力', '目標志向の実行力'],
-      challenges: ['完璧主義傾向', '感情表現の困難', '過度な批判性', '変化への抵抗'],
-      careers: ['コンサルタント', '研究者', 'プランナー', '作家', '投資専門家'],
-      relationships: '信頼できる少数との深い関係を好み、知的な交流を重視します。',
-      scores: { E: 15, I: 85, S: 25, N: 75, T: 80, F: 20, J: 85, P: 15 }
+      bgGradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     },
     'INTP': {
-      type: 'INTP',
+      type: 'INTP', 
       title: 'シニア思索学者',
       subtitle: '好奇心旺盛な知識探求者',
+      description: '生涯にわたる学習と探求を通じて深い知識を蓄積されており、新しいアイデアを探求することをお楽しみになられます。',
+      strengths: ['優れた分析力', '創造的思考', '論理的推論力', '知的好奇心', '客観的判断力'],
+      challenges: ['現実的応用の困難さ', '感情的コミュニケーション不足', '優柔不断さ', '細部の見落とし'],
+      careers: ['研究者', '教授', 'アナリスト', '哲学者', '発明家'],
+      relationships: '知的対話を楽しめる相手をお好みになり、個人的な空間を重要視されます。',
       emoji: '🤔',
       color: '#8b5cf6',
-      bgGradient: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
-      description: '生涯にわたる学習と探求を通じて深い知識を蓄積され、新しいアイデアや概念を探求することを楽しんでおられます。',
-      strengths: ['卓越した分析力', '創造的思考', '論理的推論力', '強い探求心', '客観的判断力'],
-      challenges: ['実用的応用の困難', '感情的コミュニケーション不足', '優柔不断', '細部の見落とし'],
-      careers: ['研究者', '教授', 'アナリスト', '哲学者', '発明家'],
-      relationships: '深い知的対話ができる相手を好み、個人の空間を非常に重視します。',
-      scores: { E: 20, I: 80, S: 30, N: 70, T: 75, F: 25, J: 35, P: 65 }
+      bgGradient: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)'
     },
     'ENTJ': {
       type: 'ENTJ',
-      title: 'シニア実行リーダー',
-      subtitle: '天性の組織指導者',
+      title: 'シニア指導者',
+      subtitle: '経験豊富なリーダーシップの模範',
+      description: '長い経験を通じて培われたリーダーシップで周囲の方々を導かれ、明確な目標達成のために体系的に行動なさいます。',
+      strengths: ['強力なリーダーシップ', '戦略的思考', '決断力', '組織運営能力', '効率的実行力'],
+      challenges: ['頑固さ', '感情への配慮不足', '権威的傾向', '細部の見落とし'],
+      careers: ['経営陣', 'プロジェクト管理者', '講師', 'カウンセラー', '団体リーダー'],
+      relationships: '目標指向で互いに成長できる関係をお求めになり、率直なコミュニケーションをお好みになります。',
       emoji: '👑',
-      color: '#059669',
-      bgGradient: 'linear-gradient(135deg, #34d399 0%, #059669 100%)',
-      description: 'あなたは天性のリーダーであり、優れた組織力と決断力を持ち、他人を効果的に指導し、動機づけることができます。',
-      strengths: ['卓越したリーダーシップ', '強い目標意識', '優秀な組織力', '果断な決断力', '高い実行力'],
-      challenges: ['過度な強さ', '忍耐力不足', '他者の感情軽視', '強い支配欲'],
-      careers: ['企業幹部', 'プロジェクトマネージャー', '政府官僚', '弁護士', '起業家'],
-      relationships: '関係においてもリーダーシップを取りがちで、効率性と目標志向の関わりを重視します。',
-      scores: { E: 85, I: 15, S: 30, N: 70, T: 80, F: 20, J: 85, P: 15 }
+      color: '#dc2626',
+      bgGradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
     },
     'ENTP': {
       type: 'ENTP',
-      title: 'シニア革新探究者',
-      subtitle: '活力ある創造的発明家',
+      title: 'シニア革新者',
+      subtitle: '創造的アイデアの源泉',
+      description: '豊富な経験をもとに新しいアイデアを絶えず創出され、変化と革新を通じて活力をお得になります。',
+      strengths: ['創造的発想力', '適応力', '説得力', '挑戦精神', '幅広い関心'],
+      challenges: ['集中力不足', '一貫性の欠如', '細部への注意不足', '現実性の不足'],
+      careers: ['起業家', '発明家', '講演者', '企画者', '文化芸術活動家'],
+      relationships: '知的刺激を与える多様な方々との交流をお楽しみになり、新しいアイデアを共有することをお好みになります。',
       emoji: '💡',
-      color: '#dc2626',
-      bgGradient: 'linear-gradient(135deg, #f87171 0%, #dc2626 100%)',
-      description: '豊かな創造力と無限の好奇心を持ち、新しい可能性と機会を発見することに長けています。',
-      strengths: ['革新的思考', '高い適応性', '優秀な対人関係能力', '迅速な学習能力', '楽観的姿勢'],
-      challenges: ['長期プロジェクトの継続困難', '細部への注意不足', '気が散りやすい', 'ルーチンワークの回避'],
-      careers: ['起業家', 'マーケティング専門家', 'コンサルタント', '講演者', 'クリエイティブディレクター'],
-      relationships: '活力に満ち刺激的な関係を好み、知的挑戦と成長を重視します。',
-      scores: { E: 80, I: 20, S: 25, N: 75, T: 70, F: 30, J: 30, P: 70 }
+      color: '#f59e0b',
+      bgGradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)'
     },
     'INFJ': {
       type: 'INFJ',
-      title: 'シニア知恵守護者',
-      subtitle: '温かく洞察力ある理想主義者',
+      title: 'シニア賢者',
+      subtitle: '深い洞察力をお持ちの助言者',
+      description: '生涯の経験で培われた深い洞察力で他者を理解し助けることに献身され、意味のある価値をお求めになります。',
+      strengths: ['深い洞察力', '共感能力', '理想主義', '献身的態度', '創造的思考'],
+      challenges: ['過度な完璧主義', '燃え尽き症候群のリスク', '対立回避', '現実性の不足'],
+      careers: ['カウンセラー', '教育者', '作家', '社会奉仕者', '芸術家'],
+      relationships: '誠実で深い関係をお求めになり、相手の成長と幸福を心から願われます。',
       emoji: '🌟',
-      color: '#7c3aed',
-      bgGradient: 'linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%)',
-      description: '深い直感と共感力を持ち、常に他者のニーズを理解し、温かいサポートを提供することができます。',
-      strengths: ['深い洞察力', '強い共感力', '理想主義精神', '創造的思考', '確固たる価値観'],
-      challenges: ['過度な理想化', '疲労しやすい', '衝突回避', '完璧主義'],
-      careers: ['心理カウンセラー', '作家', 'ソーシャルワーカー', '教師', '宗教指導者'],
-      relationships: '深い感情的つながりを求め、相互理解と精神的共鳴を重視します。',
-      scores: { E: 25, I: 75, S: 30, N: 70, T: 35, F: 65, J: 75, P: 25 }
+      color: '#10b981',
+      bgGradient: 'linear-gradient(135deg, #34d399 0%, #10b981 100%)'
     },
     'INFP': {
       type: 'INFP',
-      title: 'シニア理想主義者',
-      subtitle: '真実と調和を追求する調停者',
+      title: 'シニア調停者',
+      subtitle: '温かい心の平和主義者',
+      description: '生涯にわたる人間への深い理解で調和のある環境を作り上げられ、個人の価値と信念を大切になさいます。',
+      strengths: ['高い共感能力', '創造性', '個人的価値の追求', '適応力', '調和の追求'],
+      challenges: ['過度な理想主義', '対立回避', '優柔不断さ', '現実逃避'],
+      careers: ['作家', '芸術家', 'カウンセラー', '教育者', '社会福祉士'],
+      relationships: '真実で意味のある関係を重視され、相手の個性と価値を尊重されます。',
       emoji: '🕊️',
       color: '#06b6d4',
-      bgGradient: 'linear-gradient(135deg, #67e8f9 0%, #06b6d4 100%)',
-      description: '真の理想主義者であり、常に人生の美しい面を探し、世界をより良い場所にしようと努めています。',
-      strengths: ['強い価値観', '創造的表現', '深い共感力', '高い適応力', '誠実な人柄'],
-      challenges: ['過度な敏感さ', '実用性の欠如', '衝突回避', '自己批判'],
-      careers: ['芸術家', '作家', '心理学者', 'NPO職員', '音楽家'],
-      relationships: '真摯で深い感情的つながりを重視し、理解と受容の環境を必要とします。',
-      scores: { E: 30, I: 70, S: 35, N: 65, T: 30, F: 70, J: 40, P: 60 }
+      bgGradient: 'linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%)'
     },
     'ENFJ': {
       type: 'ENFJ',
-      title: 'シニア人生指導者',
-      subtitle: '人を鼓舞する指導者',
-      emoji: '🌈',
-      color: '#f59e0b',
-      bgGradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-      description: '天性のリーダーであり指導者として、常に他者の潜在能力を引き出し、個人の成長を助けることができます。',
-      strengths: ['卓越した対人スキル', '強い責任感', '他者を鼓舞する能力', '組織調整能力', '理想主義'],
-      challenges: ['過度な献身', '自分のニーズの軽視', '過度な理想化', '困難な決断への苦手意識'],
-      careers: ['教師', 'トレーナー', '地域リーダー', '心理カウンセラー', '人事専門家'],
-      relationships: 'パートナーの成長と発展を支援することに専念し、調和ある人間関係を重視します。',
-      scores: { E: 75, I: 25, S: 35, N: 65, T: 25, F: 75, J: 70, P: 30 }
+      title: 'シニア先生',
+      subtitle: '温かい心の人生メンター',
+      description: '豊富な人生経験をもとに他者の成長を助けられ、共同体の和合と発展のために献身されます。',
+      strengths: ['優れたコミュニケーション能力', '他者への関心', 'リーダーシップ', '共感能力', '動機付け'],
+      challenges: ['自己犠牲的傾向', '批判への敏感さ', '過度な介入', '境界設定の困難さ'],
+      careers: ['教育者', 'カウンセラー', '社会奉仕者', '講師', '宗教家'],
+      relationships: '他者の潜在能力を引き出し成長を助けることを喜びとされ、温かく支援的な関係を築かれます。',
+      emoji: '🌻',
+      color: '#f97316',
+      bgGradient: 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)'
     },
     'ENFP': {
       type: 'ENFP',
-      title: 'シニア熱情活動家',
-      subtitle: '情熱あふれる鼓舞者',
-      emoji: '🎭',
+      title: 'シニア活動家',
+      subtitle: '情熱的な人生の応援者',
+      description: '溢れる情熱とポジティブなエネルギーで周囲の方々にインスピレーションを与えられ、新しい可能性を発見し実現することに優れていらっしゃいます。',
+      strengths: ['優れたコミュニケーション', '創造的問題解決', '情熱とエネルギー', '他者の動機付け', '適応力'],
+      challenges: ['集中力不足', '一貫性の欠如', '過度な楽観主義', '実務処理の困難さ'],
+      careers: ['講演者', '文化企画者', 'カウンセラー', '教育者', '芸術家'],
+      relationships: '多様な方々とエネルギーを分かち合い、互いにインスピレーションを与え合う活気ある関係をお好みになります。',
+      emoji: '🎪',
       color: '#ec4899',
-      bgGradient: 'linear-gradient(135deg, #f472b6 0%, #ec4899 100%)',
-      description: '真の自由精神であり、情熱と創造力に満ち、常に周囲の人々にポジティブなエネルギーをもたらします。',
-      strengths: ['強い情熱', '卓越した人間関係', '創造的思考', '高い適応力', '楽観的姿勢'],
-      challenges: ['注意散漫', '持続力不足', '過度な敏感さ', 'ストレス下での困難'],
-      careers: ['芸術家', '俳優', 'マーケティング専門家', '社会活動家', 'セラピスト'],
-      relationships: '情熱と成長に満ちた関係を求め、感情的つながりと理解を重視します。',
-      scores: { E: 80, I: 20, S: 30, N: 70, T: 35, F: 65, J: 35, P: 65 }
+      bgGradient: 'linear-gradient(135deg, #f472b6 0%, #ec4899 100%)'
     },
     'ISTJ': {
       type: 'ISTJ',
-      title: 'シニア安定管理者',
-      subtitle: '信頼できる伝統守護者',
+      title: 'シニア守護者',
+      subtitle: '信頼できる伝統の守り手',
+      description: '生涯にわたる誠実さと責任感で周囲の方々の頼もしい支えとなられ、安定的で体系的な人生をお求めになります。',
+      strengths: ['高い責任感', '体系的アプローチ', '信頼性', 'きめ細やかさ', '忍耐力'],
+      challenges: ['変化への抵抗', '融通性の不足', '感情表現の困難さ', '新しいアイデア受容の困難さ'],
+      careers: ['管理者', '会計士', '公務員', '教育者', '専門技術者'],
+      relationships: '信頼と安定性をもとにした長期的で深い関係を重視され、約束を守ることを重要視されます。',
       emoji: '🏛️',
       color: '#374151',
-      bgGradient: 'linear-gradient(135deg, #6b7280 0%, #374151 100%)',
-      description: '社会の基盤であり、強い責任感と信頼性を持ち、常に約束した任務を完遂することができます。',
-      strengths: ['高い責任感', '信頼性', '細部への注意', '実用性', '粘り強さ'],
-      challenges: ['変化への抵抗', '過度な厳格さ', '柔軟性の欠如', '他者の感情軽視'],
-      careers: ['会計士', '管理者', '公務員', 'エンジニア', '裁判官'],
-      relationships: '安定性と約束を重視し、伝統的な関係パターンを好みます。',
-      scores: { E: 20, I: 80, S: 80, N: 20, T: 70, F: 30, J: 85, P: 15 }
+      bgGradient: 'linear-gradient(135deg, #6b7280 0%, #374151 100%)'
     },
     'ISFJ': {
       type: 'ISFJ',
-      title: 'シニア守護支援者',
-      subtitle: '温かい保護者',
-      emoji: '🤗',
-      color: '#10b981',
-      bgGradient: 'linear-gradient(135deg, #34d399 0%, #10b981 100%)',
-      description: '真の利他主義者であり、常に大切な人々を保護し支援する準備ができています。',
-      strengths: ['強い共感力', '信頼性', '細やかな配慮', '他者支援', '高い忠誠心'],
-      challenges: ['過度な自己犠牲', '衝突回避', '変化への抵抗', '自信不足'],
-      careers: ['看護師', '教師', 'ソーシャルワーカー', '図書館員', '人事'],
-      relationships: '家族と伝統を非常に重視し、常に他者のニーズを優先します。',
-      scores: { E: 25, I: 75, S: 75, N: 25, T: 30, F: 70, J: 80, P: 20 }
+      title: 'シニア保護者',
+      subtitle: '温かい心の世話役',
+      description: '生涯にわたる献身と奉仕で家族や共同体をお世話され、他者のニーズを先に考える温かい心をお持ちでいらっしゃいます。',
+      strengths: ['優れた世話能力', '細やかな配慮', '責任感', '協力的態度', '伝統重視'],
+      challenges: ['自己主張不足', '過度な自己犠牲', '変化適応の困難さ', '対立回避'],
+      careers: ['介護士', '社会福祉士', '教育者', 'カウンセラー', '宗教家'],
+      relationships: '相手を細やかに配慮し支援することを喜びとされ、安定的で信頼できる関係をお求めになります。',
+      emoji: '🤱',
+      color: '#059669',
+      bgGradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
     },
     'ESTJ': {
       type: 'ESTJ',
-      title: 'シニア実行管理者',
-      subtitle: '効率的な組織リーダー',
-      emoji: '📋',
+      title: 'シニア管理者',
+      subtitle: '経験豊富な組織の柱',
+      description: '長い経験で培われた組織運営能力で効率的なシステムを作り管理され、実用的で現実的なアプローチをお求めになります。',
+      strengths: ['優れた組織力', '実用的思考', 'リーダーシップ', '決断力', '責任感'],
+      challenges: ['頑固さ', '感情への配慮不足', '変化への抵抗', '細部への執着'],
+      careers: ['管理者', '事業家', '公務員', '教育行政家', '団体運営者'],
+      relationships: '明確な役割と責任をもとにした体系的な関係をお好みになり、相互尊重と信頼を重視されます。',
+      emoji: '📊',
       color: '#b91c1c',
-      bgGradient: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
-      description: '優秀な管理者であり組織者として、アイデアを行動に変える卓越した能力を持っています。',
-      strengths: ['卓越した組織力', '強い責任感', '実用性', '果断な決断', 'リーダーシップ'],
-      challenges: ['過度な厳格さ', '柔軟性の欠如', '他者の感情軽視', '変化への抵抗'],
-      careers: ['企業管理者', '政府官僚', 'プロジェクト主管', '軍事指導者', '銀行家'],
-      relationships: '伝統と安定性を重視し、関係においてリーダーシップを取る傾向があります。',
-      scores: { E: 75, I: 25, S: 75, N: 25, T: 80, F: 20, J: 85, P: 15 }
+      bgGradient: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)'
     },
     'ESFJ': {
       type: 'ESFJ',
-      title: 'シニア社交調整者',
-      subtitle: '温かい人間関係専門家',
-      emoji: '💝',
-      color: '#be185d',
-      bgGradient: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
-      description: '真の人民の人であり、常に他者を助けることに熱心で、調和のとれた環境作りに努めています。',
-      strengths: ['優秀な対人スキル', '強い共感力', '組織調整能力', '忠実で信頼できる', '他者への思いやり'],
-      challenges: ['他者の承認への過度な関心', '衝突回避', '自分のニーズの軽視', '批判への敏感さ'],
-      careers: ['看護師', '教師', '人事', 'ソーシャルワーカー', 'イベントプランナー'],
-      relationships: '調和のとれた人間関係を非常に重視し、常に他者のニーズを満たそうと努力します。',
-      scores: { E: 80, I: 20, S: 70, N: 30, T: 25, F: 75, J: 75, P: 25 }
+      title: 'シニア協力者',
+      subtitle: '共同体の温かい求心点',
+      description: '豊富な人間関係経験で共同体の和合を図られ、すべての方が快適で幸せになれるよう細やかに配慮されます。',
+      strengths: ['優れた対人関係', '協力的態度', '責任感', '実用的支援', '調和の追求'],
+      challenges: ['批判への敏感さ', '対立ストレス', '自己主張不足', '変化適応の困難さ'],
+      careers: ['教育者', 'カウンセラー', '社会奉仕者', 'イベント企画者', '接客業'],
+      relationships: 'すべての方が包含され大切にされる温かく調和のとれた関係を築くことを重視されます。',
+      emoji: '🤗',
+      color: '#d97706',
+      bgGradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
     },
     'ISTP': {
       type: 'ISTP',
-      title: 'シニア実践専門家',
-      subtitle: '柔軟な問題解決者',
+      title: 'シニア職人',
+      subtitle: '実用的知恵の持ち主',
+      description: '生涯にわたる実務経験で実用的な問題解決能力を身につけられ、手で直接作り修理することをお楽しみになります。',
+      strengths: ['優れた問題解決力', '実用的思考', '器用さ', '独立性', '冷静さ'],
+      challenges: ['感情表現の困難さ', '長期計画不足', 'チームワークの困難さ', 'ルーティン業務への退屈さ'],
+      careers: ['技術者', '修理専門家', '工芸家', '農業従事者', '機械操作員'],
+      relationships: '実質的な助けを通じて関心を表現され、相手の独立性を尊重する楽な関係をお好みになります。',
       emoji: '🔧',
-      color: '#0d9488',
-      bgGradient: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
-      description: '天性の職人であり問題解決者として、実用的なスキルと冷静な判断力を持っています。',
-      strengths: ['実用的スキル', '高い適応力', '冷静な分析', '強い独立性', '危機処理能力'],
-      challenges: ['感情表現の困難', '長期計画の欠如', '約束回避', '過度な独立性'],
-      careers: ['エンジニア', '技術者', 'パイロット', '外科医', '警察官'],
-      relationships: '言葉より行動を重視し、実際の行動を通じて愛情を表現します。',
-      scores: { E: 30, I: 70, S: 80, N: 20, T: 75, F: 25, J: 25, P: 75 }
+      color: '#7c2d12',
+      bgGradient: 'linear-gradient(135deg, #a3a3a3 0%, #525252 100%)'
     },
     'ISFP': {
       type: 'ISFP',
       title: 'シニア芸術家',
-      subtitle: '温和な芸術創作者',
+      subtitle: '静かな美しさの創造者',
+      description: '生涯にわたる美的感覚と繊細な感性で美しさを創造され、個人の価値と調和のある人生をお求めになります。',
+      strengths: ['芸術的感覚', '共感能力', '柔軟性', '個人的価値追求', '細やかな観察力'],
+      challenges: ['自己主張不足', '対立回避', '現実的問題解決の困難さ', 'ストレスへの敏感さ'],
+      careers: ['芸術家', 'デザイナー', '音楽家', '作家', '治療士'],
+      relationships: '真実で深い感情的つながりを重視され、相手の個性と感情を細やかに配慮されます。',
       emoji: '🎨',
-      color: '#7c2d12',
-      bgGradient: 'linear-gradient(135deg, #f97316 0%, #7c2d12 100%)',
-      description: '真の芸術家であり、鋭い美的感覚と深い感情表現能力を持っています。',
-      strengths: ['芸術的感性', '強い価値観', '高い適応力', '他者への思いやり', '創造的表現'],
-      challenges: ['過度な敏感さ', '衝突回避', '組織性の欠如', '自己批判'],
-      careers: ['芸術家', '音楽家', 'デザイナー', 'セラピスト', '環境保護活動家'],
-      relationships: '深い感情的つながりを重視し、理解と支援のある環境を必要とします。',
-      scores: { E: 25, I: 75, S: 65, N: 35, T: 30, F: 70, J: 35, P: 65 }
+      color: '#7c3aed',
+      bgGradient: 'linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%)'
     },
     'ESTP': {
       type: 'ESTP',
-      title: 'シニア活力実行家',
-      subtitle: '活力に満ちた行動派',
-      emoji: '⚡',
-      color: '#ca8a04',
-      bgGradient: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)',
-      description: '真の実行家であり、常に新しい挑戦と機会を迎える準備ができています。',
-      strengths: ['高い適応性', '実際の行動力', '対人関係能力', '危機処理能力', '楽観的姿勢'],
-      challenges: ['長期計画の欠如', '衝動的傾向', '理論学習の回避', '他者の感情軽視'],
-      careers: ['営業代表', '起業家', '運動選手', '救急隊員', 'エンターテイナー'],
-      relationships: '活力と刺激に満ちた関係を好み、未来より現在を重視します。',
-      scores: { E: 85, I: 15, S: 80, N: 20, T: 65, F: 35, J: 20, P: 80 }
+      title: 'シニア冒険者',
+      subtitle: '活動的な人生の楽しみ手',
+      description: '豊富な人生経験をもとに現在の瞬間をお楽しみになり、実用的で柔軟なアプローチで問題を解決されます。',
+      strengths: ['優れた適応力', '実用的問題解決', '社交性', '現実感覚', '行動力'],
+      challenges: ['計画性不足', '衝動的行動', '長期的視点不足', '細部の見落とし'],
+      careers: ['営業職', 'サービス業', '運動コーチ', 'イベント企画者', '緊急対応要員'],
+      relationships: '活動的で楽しい経験を共に分かち合うことをお楽しみになり、自然で楽な関係をお好みになります。',
+      emoji: '🏃',
+      color: '#dc2626',
+      bgGradient: 'linear-gradient(135deg, #f87171 0%, #dc2626 100%)'
     },
     'ESFP': {
       type: 'ESFP',
-      title: 'シニア歓楽使者',
-      subtitle: '情熱的なエンターテイナー',
-      emoji: '🎉',
-      color: '#c026d3',
-      bgGradient: 'linear-gradient(135deg, #d946ef 0%, #c026d3 100%)',
-      description: '天性のエンターテイナーであり、常に周囲の人々に楽しさとポジティブなエネルギーをもたらします。',
-      strengths: ['強い情熱', '優秀な人間関係', '実用性', '高い適応力', '楽観的姿勢'],
-      challenges: ['注意散漫', '衝突回避', '長期計画の欠如', '批判への敏感さ'],
-      careers: ['俳優', '営業員', 'イベントプランナー', 'ソーシャルワーカー', '旅行ガイド'],
-      relationships: '調和で楽しい関係を重視し、常に皆が幸せを感じられるよう努力します。',
-      scores: { E: 80, I: 20, S: 75, N: 25, T: 30, F: 70, J: 30, P: 70 }
+      title: 'シニア エンターテイナー',
+      subtitle: '温かい心のムードメーカー',
+      description: '溢れるエネルギーと温かい心で周囲の方々に喜びをお届けし、現在の瞬間を大切にしお楽しみになります。',
+      strengths: ['優れた社交性', 'ポジティブエネルギー', '共感能力', '柔軟性', '実用的支援'],
+      challenges: ['計画性不足', '批判への敏感さ', '対立ストレス', '長期目標設定の困難さ'],
+      careers: ['教育者', 'カウンセラー', 'エンターテイナー', 'イベント企画者', 'サービス業'],
+      relationships: 'すべての方が幸せで楽しい気持ちになることを見ることを喜びとされ、温かく活気ある関係を築かれます。',
+      emoji: '🌈',
+      color: '#f59e0b',
+      bgGradient: 'linear-gradient(135deg, #fde047 0%, #f59e0b 100%)'
     }
   };
 
-  if (!mounted) {
-    return <div>読み込み中...</div>;
-  }
+  const copyResultLink = () => {
+    if (mounted && typeof window !== 'undefined') {
+      navigator.clipboard.writeText(window.location.href);
+      setShowCopySuccess(true);
+      setTimeout(() => {
+        setShowCopySuccess(false);
+        setShowShareDialog(false);
+      }, 2000);
+    }
+  };
 
-  const currentType = resultData?.mbtiType || params.id?.toString().toUpperCase();
-  const typeInfo = mbtiTypes[currentType];
-
-  if (!typeInfo) {
+  if (!mounted || !resultData) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">結果が見つかりません</h1>
-          <button 
-            onClick={() => router.push('/')}
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
-          >
-            ホームに戻る
-          </button>
-        </div>
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>結果を読み込み中です...</p>
+        
+        <style jsx>{`
+          .loading-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+          }
+          
+          .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+          }
+          
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     );
   }
 
-  const tabs = [
-    { id: 'overview', label: '性格概要', icon: '📋' },
-    { id: 'strengths', label: '強み分析', icon: '💪' },
-    { id: 'careers', label: '適合分野', icon: '💼' },
-    { id: 'relationships', label: '人間関係', icon: '❤️' }
-  ];
-
-  const shareResult = () => {
-    const shareText = `私のMBTI性格タイプは ${typeInfo.type} - ${typeInfo.title}です！あなたも性格タイプテストを受けてみませんか？`;
-    if (navigator.share) {
-      navigator.share({
-        title: 'シニアMBTI性格テスト結果',
-        text: shareText,
-        url: window.location.href
-      });
-    } else {
-      navigator.clipboard.writeText(`${shareText} ${window.location.href}`);
-      setShowShareDialog(true);
-      setTimeout(() => setShowShareDialog(false), 2000);
-    }
-  };
+  const typeInfo = mbtiTypes[resultData.mbtiType] || mbtiTypes['INTJ'];
 
   return (
-    <div className="min-h-screen" style={{ background: typeInfo.bgGradient }}>
-      {/* 言語選択器 */}
-      <div className="absolute top-4 right-4 z-50">
-        <LanguageSelector />
+    <div className="result-container">
+      {/* ヒーローセクション */}
+      <div className="hero-section">
+        <div className="hero-content">
+          <div className="type-badge">
+            <span className="type-emoji">{typeInfo.emoji}</span>
+            <div className="type-info">
+              <h1 className="type-title">{typeInfo.type}</h1>
+              <p className="type-subtitle">{typeInfo.title}</p>
+            </div>
+          </div>
+          
+          <h2 className="hero-title">{typeInfo.subtitle}</h2>
+          <p className="hero-description">{typeInfo.description}</p>
+          
+          <div className="action-buttons">
+            <button 
+              className="share-button"
+              onClick={() => setShowShareDialog(true)}
+            >
+              <span>🔗</span> 結果を共有する
+            </button>
+            <button 
+              className="home-button"
+              onClick={() => router.push('/')}
+            >
+              <span>🏠</span> 再テスト
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* メインコンテンツ */}
-      <div className="container mx-auto px-4 py-8">
-        {/* タイトル領域 */}
-        <div className="text-center mb-8">
-          <div className="inline-block bg-white/20 backdrop-blur-lg rounded-3xl p-8 mb-6">
-            <div className="text-6xl mb-4">{typeInfo.emoji}</div>
-            <h1 className="text-6xl font-black text-white mb-4 type-title-highlight">
-              {typeInfo.type}
-            </h1>
-            <h2 className="text-3xl font-bold text-white/95 mb-3">
-              {typeInfo.title}
-            </h2>
-            <p className="text-lg text-white/80">
-              {typeInfo.subtitle}
-            </p>
+      {/* 詳細分析セクション */}
+      <div className="analysis-section">
+        <div className="analysis-grid">
+          {/* 強みカード */}
+          <div className="analysis-card strengths-card">
+            <div className="card-header">
+              <h3>💪 主な強み</h3>
+            </div>
+            <div className="card-content">
+              {typeInfo.strengths.map((strength, index) => (
+                <div key={index} className="strength-item">
+                  <span className="bullet">✨</span>
+                  <span>{strength}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* シェアボタン */}
-          <button
-            onClick={shareResult}
-            className="bg-white/20 backdrop-blur-lg text-white px-6 py-3 rounded-full hover:bg-white/30 transition-all duration-300 font-medium"
-          >
-            結果をシェア 📤
-          </button>
-        </div>
-
-        {/* タブナビゲーション */}
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
-                activeTab === tab.id
-                  ? 'bg-white text-gray-800 shadow-lg'
-                  : 'bg-white/20 text-white hover:bg-white/30'
-              }`}
-            >
-              <span className="mr-2">{tab.icon}</span>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* コンテンツ領域 */}
-        <div className="bg-white/95 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
-          {activeTab === 'overview' && (
-            <div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                <span className="mr-3">📋</span>
-                性格概要
-              </h3>
-              <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                {typeInfo.description}
-              </p>
-              
-              {/* 性格次元スコア */}
-              <div className="grid md:grid-cols-2 gap-6">
-                {['E/I', 'S/N', 'T/F', 'J/P'].map((dimension) => {
-                  const [first, second] = dimension.split('/');
-                  const firstScore = typeInfo.scores[first];
-                  const secondScore = typeInfo.scores[second];
-                  const total = firstScore + secondScore;
-                  const firstPercentage = (firstScore / total) * 100;
-                  
-                  return (
-                    <div key={dimension} className="bg-gray-50 rounded-2xl p-6">
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="font-semibold text-gray-800">{dimension} 次元</span>
-                        <span className="text-sm text-gray-600">
-                          {firstScore}% / {secondScore}%
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-3">
-                        <div
-                          className="h-3 rounded-full transition-all duration-1000"
-                          style={{ 
-                            width: `${firstPercentage}%`,
-                            background: typeInfo.bgGradient
-                          }}
-                        ></div>
-                      </div>
-                      <div className="flex justify-between mt-2 text-sm text-gray-600">
-                        <span>{first}</span>
-                        <span>{second}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+          {/* 課題カード */}
+          <div className="analysis-card challenges-card">
+            <div className="card-header">
+              <h3>🎯 成長ポイント</h3>
             </div>
-          )}
-
-          {activeTab === 'strengths' && (
-            <div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                <span className="mr-3">💪</span>
-                強みと課題
-              </h3>
-              
-              <div className="grid md:grid-cols-2 gap-8">
-                <div>
-                  <h4 className="text-xl font-semibold text-green-600 mb-4">✅ 核心的強み</h4>
-                  <ul className="space-y-3">
-                    {typeInfo.strengths.map((strength, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="text-green-500 mr-3 mt-1">•</span>
-                        <span className="text-gray-700">{strength}</span>
-                      </li>
-                    ))}
-                  </ul>
+            <div className="card-content">
+              {typeInfo.challenges.map((challenge, index) => (
+                <div key={index} className="challenge-item">
+                  <span className="bullet">🔍</span>
+                  <span>{challenge}</span>
                 </div>
-                
-                <div>
-                  <h4 className="text-xl font-semibold text-orange-600 mb-4">⚠️ 注意点</h4>
-                  <ul className="space-y-3">
-                    {typeInfo.challenges.map((challenge, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="text-orange-500 mr-3 mt-1">•</span>
-                        <span className="text-gray-700">{challenge}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              ))}
             </div>
-          )}
+          </div>
 
-          {activeTab === 'careers' && (
-            <div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                <span className="mr-3">💼</span>
-                適合分野
-              </h3>
-              
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                {typeInfo.careers.map((career, index) => (
-                  <div
-                    key={index}
-                    className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-xl border-l-4"
-                    style={{ borderLeftColor: typeInfo.color }}
-                  >
-                    <span className="font-medium text-gray-800">{career}</span>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="bg-blue-50 rounded-2xl p-6">
-                <h4 className="text-lg font-semibold text-blue-800 mb-3">💡 キャリアアドバイス</h4>
-                <p className="text-blue-700">
-                  あなたの性格特性に基づき、あなたの才能を活かせる分野を選ぶことをお勧めします。最も重要なのは、あなたの価値観と興味に合致する仕事を見つけることです。
-                </p>
-              </div>
+          {/* 推奨活動カード */}
+          <div className="analysis-card careers-card">
+            <div className="card-header">
+              <h3>🌟 推奨活動</h3>
             </div>
-          )}
-
-          {activeTab === 'relationships' && (
-            <div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                <span className="mr-3">❤️</span>
-                人間関係
-              </h3>
-              
-              <div className="bg-pink-50 rounded-2xl p-6 mb-6">
-                <h4 className="text-lg font-semibold text-pink-800 mb-3">💝 関係の特徴</h4>
-                <p className="text-pink-700 leading-relaxed">
-                  {typeInfo.relationships}
-                </p>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-green-50 rounded-2xl p-6">
-                  <h4 className="text-lg font-semibold text-green-800 mb-3">🤝 人間関係の強み</h4>
-                  <ul className="space-y-2 text-green-700">
-                    <li>• 誠実なコミュニケーション</li>
-                    <li>• 深い感情的つながり</li>
-                    <li>• 信頼できるサポート</li>
-                    <li>• 相互尊重の関係</li>
-                  </ul>
+            <div className="card-content">
+              {typeInfo.careers.map((career, index) => (
+                <div key={index} className="career-item">
+                  <span className="bullet">🎨</span>
+                  <span>{career}</span>
                 </div>
-                
-                <div className="bg-yellow-50 rounded-2xl p-6">
-                  <h4 className="text-lg font-semibold text-yellow-800 mb-3">💡 改善提案</h4>
-                  <ul className="space-y-2 text-yellow-700">
-                    <li>• オープンなコミュニケーション</li>
-                    <li>• 異なる観点の理解</li>
-                    <li>• 個人スペースの尊重</li>
-                    <li>• 感謝の表現</li>
-                  </ul>
-                </div>
-              </div>
+              ))}
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* ボトムボタン */}
-        <div className="text-center mt-8 space-y-4">
-          <button
-            onClick={() => router.push('/')}
-            className="bg-white/20 backdrop-blur-lg text-white px-8 py-3 rounded-full hover:bg-white/30 transition-all duration-300 font-medium mr-4"
-          >
-            再テスト
-          </button>
-          
-          <button
-            onClick={shareResult}
-            className="bg-white text-gray-800 px-8 py-3 rounded-full hover:bg-gray-100 transition-all duration-300 font-medium"
-          >
-            結果をシェア
-          </button>
+          {/* 人間関係カード */}
+          <div className="analysis-card relationships-card">
+            <div className="card-header">
+              <h3>❤️ 人間関係</h3>
+            </div>
+            <div className="card-content">
+              <p className="relationship-text">{typeInfo.relationships}</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* シェア通知 */}
+      {/* 相性情報セクション */}
+      <div className="compatibility-section">
+        <div className="section-header">
+          <h2>💕 MBTI相性分析</h2>
+          <p>他のMBTIタイプとの相性を詳しく確認できます</p>
+        </div>
+        
+        <div className="compatibility-grid">
+          <div className="compatibility-card best-match">
+            <div className="compatibility-header">
+              <h3>💖 最高の相性</h3>
+              <p>深いつながりを築きやすいタイプ</p>
+            </div>
+            <div className="compatibility-types">
+              {mbtiCompatibility[resultData.mbtiType]?.bestMatch.map((type, index) => (
+                <div key={index} className="compatibility-type best">
+                  {type}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="compatibility-card good-match">
+            <div className="compatibility-header">
+              <h3>💚 良い相性</h3>
+              <p>調和良く過ごせるタイプ</p>
+            </div>
+            <div className="compatibility-types">
+              {mbtiCompatibility[resultData.mbtiType]?.goodMatch.map((type, index) => (
+                <div key={index} className="compatibility-type good">
+                  {type}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="compatibility-card challenging-match">
+            <div className="compatibility-header">
+              <h3>💛 理解が必要</h3>
+              <p>お互いの理解と配慮が必要なタイプ</p>
+            </div>
+            <div className="compatibility-types">
+              {mbtiCompatibility[resultData.mbtiType]?.challengingMatch.map((type, index) => (
+                <div key={index} className="compatibility-type challenging">
+                  {type}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* シニア向けアドバイスセクション */}
+      <div className="senior-advice-section">
+        <div className="section-header">
+          <h2>🌟 シニア世代専用アドバイス</h2>
+          <p>豊かな人生のための専門的なガイダンス</p>
+        </div>
+        
+        <div className="advice-grid">
+          <div className="advice-card lifestyle-card">
+            <div className="advice-header">
+              <h3>🎯 ライフスタイル提案</h3>
+              <p>充実した生活のためのご提案</p>
+            </div>
+            <div className="advice-content">
+              {typeInfo.seniorTips && typeInfo.seniorTips.map((tip, index) => (
+                <div key={index} className="advice-item">
+                  <span className="advice-bullet">✨</span>
+                  <span>{tip}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="advice-card health-card">
+            <div className="advice-header">
+              <h3>💪 健康管理アドバイス</h3>
+              <p>心身の健康維持のための専門指導</p>
+            </div>
+            <div className="advice-content">
+              {typeInfo.healthTips && typeInfo.healthTips.map((tip, index) => (
+                <div key={index} className="advice-item">
+                  <span className="advice-bullet">🌿</span>
+                  <span>{tip}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 共有モーダル */}
       {showShareDialog && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-full shadow-lg z-50">
-          ✅ リンクがクリップボードにコピーされました！
+        <div className="modal-overlay" onClick={() => setShowShareDialog(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>結果を共有する</h3>
+              <button 
+                className="close-button"
+                onClick={() => setShowShareDialog(false)}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              {showCopySuccess ? (
+                <div className="success-message">
+                  <span className="success-icon">✅</span>
+                  <p>リンクがクリップボードにコピーされました！</p>
+                </div>
+              ) : (
+                <button className="copy-button" onClick={copyResultLink}>
+                  <span>📋</span> リンクをコピー
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
       <style jsx>{`
-        .container {
-          max-width: 1200px;
+        .result-container {
+          min-height: 100vh;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          position: relative;
+          overflow-x: hidden;
         }
-        
-        .type-title-highlight {
-          background: linear-gradient(45deg, #FFD700, #FFA500, #FF6B6B);
+
+        .result-container::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: 
+            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 120, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120, 219, 226, 0.2) 0%, transparent 50%);
+          pointer-events: none;
+        }
+
+        .hero-section {
+          position: relative;
+          z-index: 10;
+          padding: 60px 20px 80px;
+          text-align: center;
+        }
+
+        .hero-content {
+          max-width: 800px;
+          margin: 0 auto;
+        }
+
+        .type-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 20px;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 30px;
+          padding: 24px 40px;
+          margin-bottom: 40px;
+          box-shadow: 
+            0 32px 64px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .type-emoji {
+          font-size: 48px;
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        .type-info {
+          text-align: left;
+        }
+
+        .type-title {
+          font-size: 48px;
+          font-weight: 900;
+          background: linear-gradient(135deg, #667eea, #764ba2);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
-          text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+          margin: 0;
+          letter-spacing: -1px;
         }
-        
-        .glassmorphism-card {
-          background: linear-gradient(135deg, 
-            rgba(255, 255, 255, 0.95) 0%, 
-            rgba(248, 250, 252, 0.95) 100%);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          border-radius: 32px;
-          box-shadow: 
-            0 32px 64px rgba(0, 0, 0, 0.12),
-            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+        .type-subtitle {
+          font-size: 18px;
+          color: #6B7280;
+          margin: 8px 0 0 0;
+          font-weight: 600;
+        }
+
+        .hero-title {
+          font-size: 36px;
+          font-weight: 800;
+          color: white;
+          margin-bottom: 24px;
+          text-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-description {
+          font-size: 20px;
+          color: rgba(255, 255, 255, 0.9);
+          line-height: 1.6;
+          margin-bottom: 48px;
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-buttons {
+          display: flex;
+          gap: 20px;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        .share-button, .home-button {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 16px 32px;
+          border: none;
+          border-radius: 20px;
+          font-size: 18px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          text-decoration: none;
           position: relative;
           overflow: hidden;
         }
-        
-        .glassmorphism-card::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.5), transparent);
+
+        .share-button {
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
-        
-        .floating-animation {
-          animation: float 6s ease-in-out infinite;
+
+        .home-button {
+          background: rgba(255, 255, 255, 0.9);
+          color: #374151;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
-        
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          33% { transform: translateY(-10px) rotate(1deg); }
-          66% { transform: translateY(-5px) rotate(-1deg); }
+
+        .share-button:hover, .home-button:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 16px 40px rgba(102, 126, 234, 0.5);
         }
-        
-        .hover-lift {
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+        .analysis-section {
+          position: relative;
+          z-index: 10;
+          padding: 0 20px 80px;
         }
-        
-        .hover-lift:hover {
-          transform: translateY(-8px) scale(1.02);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+
+        .analysis-grid {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 32px;
         }
-        
+
+        .analysis-card {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 24px;
+          padding: 32px;
+          box-shadow: 
+            0 32px 64px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+          transition: transform 0.3s ease;
+        }
+
+        .analysis-card:hover {
+          transform: translateY(-8px);
+        }
+
+        .card-header {
+          margin-bottom: 24px;
+        }
+
+        .card-header h3 {
+          font-size: 24px;
+          font-weight: 800;
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin: 0;
+        }
+
+        .card-content {
+          space-y: 16px;
+        }
+
+        .strength-item, .challenge-item, .career-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          margin-bottom: 16px;
+          font-size: 16px;
+          line-height: 1.6;
+          color: #374151;
+        }
+
+        .bullet {
+          font-size: 18px;
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+
+        .relationship-text {
+          font-size: 16px;
+          line-height: 1.6;
+          color: #374151;
+          margin: 0;
+        }
+
+        .modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(8px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+
+        .modal-content {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 24px;
+          padding: 32px;
+          min-width: 400px;
+          box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+        }
+
+        .modal-header h3 {
+          font-size: 24px;
+          font-weight: 800;
+          color: #374151;
+          margin: 0;
+        }
+
+        .close-button {
+          background: none;
+          border: none;
+          font-size: 24px;
+          color: #6B7280;
+          cursor: pointer;
+          padding: 4px;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: background 0.2s ease;
+        }
+
+        .close-button:hover {
+          background: rgba(107, 114, 128, 0.1);
+        }
+
+        .copy-button {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          padding: 16px;
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+          border: none;
+          border-radius: 16px;
+          font-size: 18px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: transform 0.2s ease;
+        }
+
+        .copy-button:hover {
+          transform: translateY(-2px);
+        }
+
+        .success-message {
+          text-align: center;
+          padding: 20px;
+        }
+
+        .success-icon {
+          font-size: 48px;
+          display: block;
+          margin-bottom: 16px;
+        }
+
+        .success-message p {
+          font-size: 18px;
+          color: #10B981;
+          font-weight: 600;
+          margin: 0;
+        }
+
+        /* 新しいセクションのスタイル */
+        .compatibility-section, .senior-advice-section {
+          position: relative;
+          z-index: 10;
+          padding: 60px 20px;
+        }
+
+        .section-header {
+          text-align: center;
+          margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+          font-size: 36px;
+          font-weight: 800;
+          color: white;
+          margin-bottom: 16px;
+          text-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-header p {
+          font-size: 18px;
+          color: rgba(255, 255, 255, 0.8);
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .compatibility-grid, .advice-grid {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: grid;
+          gap: 32px;
+        }
+
+        .compatibility-grid {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .advice-grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+
+        .compatibility-card, .advice-card {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 24px;
+          padding: 32px;
+          box-shadow: 
+            0 32px 64px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+          transition: transform 0.3s ease;
+        }
+
+        .compatibility-card:hover, .advice-card:hover {
+          transform: translateY(-8px);
+        }
+
+        .compatibility-header, .advice-header {
+          text-align: center;
+          margin-bottom: 24px;
+        }
+
+        .compatibility-header h3, .advice-header h3 {
+          font-size: 24px;
+          font-weight: 800;
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin: 0 0 8px 0;
+        }
+
+        .compatibility-header p, .advice-header p {
+          font-size: 14px;
+          color: #6B7280;
+          margin: 0;
+        }
+
+        .compatibility-types {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          justify-content: center;
+        }
+
+        .compatibility-type {
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 14px;
+          font-weight: 700;
+          color: white;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .compatibility-type.best {
+          background: linear-gradient(135deg, #f472b6, #ec4899);
+        }
+
+        .compatibility-type.good {
+          background: linear-gradient(135deg, #34d399, #10b981);
+        }
+
+        .compatibility-type.challenging {
+          background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+
+        .advice-content {
+          space-y: 16px;
+        }
+
+        .advice-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          margin-bottom: 16px;
+          font-size: 16px;
+          line-height: 1.6;
+          color: #374151;
+        }
+
+        .advice-bullet {
+          font-size: 18px;
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+
+        /* モバイル対応 */
         @media (max-width: 768px) {
-          .container {
-            padding-left: 1rem;
-            padding-right: 1rem;
+          .hero-section {
+            padding: 40px 16px 60px;
           }
-          
-          .grid {
+
+          .type-badge {
+            flex-direction: column;
+            gap: 16px;
+            padding: 20px;
+          }
+
+          .type-info {
+            text-align: center;
+          }
+
+          .type-title {
+            font-size: 36px;
+          }
+
+          .hero-title {
+            font-size: 28px;
+          }
+
+          .hero-description {
+            font-size: 18px;
+          }
+
+          .action-buttons {
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .share-button, .home-button {
+            width: 100%;
+            max-width: 300px;
+          }
+
+          .analysis-section {
+            padding: 0 16px 60px;
+          }
+
+          .analysis-grid {
             grid-template-columns: 1fr;
+            gap: 24px;
           }
-          
-          .type-title-highlight {
-            font-size: 3rem;
+
+          .analysis-card {
+            padding: 24px;
           }
-        }
-        
-        /* アクセシビリティ対応 */
-        @media (prefers-reduced-motion: reduce) {
-          .floating-animation,
-          .hover-lift {
-            animation: none;
-            transition: none;
+
+          .compatibility-section, .senior-advice-section {
+            padding: 40px 16px;
+          }
+
+          .section-header h2 {
+            font-size: 28px;
+          }
+
+          .compatibility-grid, .advice-grid {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+
+          .compatibility-card, .advice-card {
+            padding: 24px;
+          }
+
+          .modal-content {
+            margin: 20px;
+            min-width: unset;
+            width: calc(100% - 40px);
           }
         }
       `}</style>

@@ -1,28 +1,127 @@
-/* Simple CSS for deployment testing */
+/* Core Web Vitals 최적화된 CSS - 일본어 버전 */
+
+/* 폰트 로딩 최적화 */
+@font-face {
+  font-family: 'Noto Sans JP';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap; /* CLS 방지를 위한 font-display: swap */
+  src: local('Noto Sans CJK JP'), local('NotoSansCJKjp-Regular'),
+       url('https://fonts.gstatic.com/s/notosansjp/v52/O4ZMFGj5hxF-RDaGvL-yhsNIjAmlcONPH-4k.woff2') format('woff2');
+  unicode-range: U+3040-309F, U+30A0-30FF, U+4E00-9FAF;
+}
+
+/* CSS 리셋 및 기본 설정 */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  line-height: 1.6;
-  color: #333;
+/* 스크롤 성능 최적화 */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  scroll-behavior: smooth;
+  /* 시니어 접근성 향상 */
+  font-size: 18px; /* 더 큰 기본 폰트 크기 */
+}
+
+body {
+  font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.7; /* 시니어 가독성 향상 */
+  color: #2d3748;
+  background-color: #f7fafc;
+  /* GPU 가속 활용 */
+  transform: translateZ(0);
+  will-change: scroll-position;
+  /* 다크모드 대응 */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 다크모드 지원 */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1a202c;
+    color: #e2e8f0;
+  }
+  
+  .bg-white {
+    background-color: #2d3748 !important;
+  }
+  
+  .text-gray-800 {
+    color: #e2e8f0 !important;
+  }
+  
+  .text-gray-600 {
+    color: #a0aec0 !important;
+  }
+  
+  .border-gray-200 {
+    border-color: #4a5568 !important;
+  }
+}
+
+/* 고대비 모드 지원 */
+@media (prefers-contrast: high) {
+  body {
+    background-color: #000000;
+    color: #ffffff;
+  }
+  
+  .text-blue-600 {
+    color: #0066ff !important;
+  }
+  
+  .bg-blue-600 {
+    background-color: #0066ff !important;
+  }
+  
+  button {
+    border: 2px solid #ffffff;
+  }
+}
+
+/* 시니어 친화적 접근성 향상 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* 레이아웃 시프트 방지를 위한 명시적 치수 설정 */
 .min-h-screen {
   min-height: 100vh;
+  min-height: 100dvh; /* 동적 뷰포트 높이 지원 */
+  /* GPU 가속 */
+  transform: translateZ(0);
+  contain: layout style paint;
 }
 
 .bg-gradient-to-br {
   background: linear-gradient(to bottom right, #dbeafe, #e0e7ff);
+  /* GPU 가속 활용 */
+  will-change: background;
+  backface-visibility: hidden;
 }
 
 .container {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 1rem;
+  /* 레이아웃 안정성 */
+  contain: layout;
 }
 
 .mx-auto {
@@ -125,19 +224,45 @@ html, body {
   max-width: 42rem;
 }
 
+/* 버튼 최적화 - 시니어 친화적 */
 button {
   cursor: pointer;
   border: none;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  /* 시니어 친화적 최소 터치 영역 */
+  min-height: 48px;
+  min-width: 48px;
+  padding: 12px 24px;
+  /* GPU 가속 */
+  transform: translateZ(0);
+  will-change: transform;
+  /* 접근성 향상 */
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  /* 포커스 표시 개선 */
+  outline: none;
 }
 
 button:hover {
   opacity: 0.9;
+  transform: translateY(-1px) translateZ(0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+button:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+  outline: 2px solid transparent;
+}
+
+button:active {
+  transform: translateY(0) translateZ(0);
 }
 
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .w-full {
@@ -390,6 +515,7 @@ button:disabled {
   margin-bottom: 1.5rem;
 }
 
+/* 반응형 최적화 */
 @media (min-width: 768px) {
   .md\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -397,9 +523,135 @@ button:disabled {
   
   .md\:text-6xl {
     font-size: 3.75rem;
+    line-height: 1.1;
   }
   
   .sm\:flex-row {
     flex-direction: row;
   }
+}
+
+/* Core Web Vitals 추가 최적화 */
+
+/* 이미지 최적화 */
+img {
+  max-width: 100%;
+  height: auto;
+  /* 레이아웃 시프트 방지 */
+  aspect-ratio: attr(width) / attr(height);
+  /* GPU 가속 */
+  transform: translateZ(0);
+  /* 로딩 최적화 */
+  loading: lazy;
+  decoding: async;
+}
+
+/* 스켈레톤 로딩 애니메이션 */
+@keyframes skeleton {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: skeleton 1.5s infinite;
+}
+
+/* 중요한 콘텐츠 우선순위 */
+.critical-content {
+  contain: layout style paint;
+  content-visibility: auto;
+}
+
+/* 지연 로딩 콘텐츠 */
+.lazy-content {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* 프리로드 힌트 */
+.preload-hint {
+  font-display: swap;
+  will-change: transform;
+}
+
+/* 터치 최적화 */
+@media (hover: none) and (pointer: coarse) {
+  button {
+    min-height: 44px;
+    padding: 16px 32px;
+  }
+  
+  .text-sm {
+    font-size: 16px; /* iOS 줌 방지 */
+  }
+}
+
+/* 인쇄 최적화 */
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* 접근성 향상 */
+@media (prefers-reduced-transparency: reduce) {
+  * {
+    backdrop-filter: none !important;
+  }
+}
+
+/* 성능 최적화를 위한 containment */
+.card {
+  contain: layout style paint;
+}
+
+.list-item {
+  contain: layout style;
+}
+
+/* 시니어 친화적 추가 스타일 */
+::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+::-moz-selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* 스크롤바 스타일링 (시니어 친화적) */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
