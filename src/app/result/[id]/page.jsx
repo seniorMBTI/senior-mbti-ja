@@ -313,10 +313,10 @@ export default function ResultPage() {
         <div className="text-center mb-8">
           <div className="inline-block bg-white/20 backdrop-blur-lg rounded-3xl p-8 mb-6">
             <div className="text-6xl mb-4">{typeInfo.emoji}</div>
-            <h1 className="text-4xl font-bold text-white mb-2">
+            <h1 className="text-6xl font-black text-white mb-4 type-title-highlight">
               {typeInfo.type}
             </h1>
-            <h2 className="text-2xl font-semibold text-white/90 mb-2">
+            <h2 className="text-3xl font-bold text-white/95 mb-3">
               {typeInfo.title}
             </h2>
             <p className="text-lg text-white/80">
@@ -532,6 +532,58 @@ export default function ResultPage() {
           max-width: 1200px;
         }
         
+        .type-title-highlight {
+          background: linear-gradient(45deg, #FFD700, #FFA500, #FF6B6B);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
+          text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .glassmorphism-card {
+          background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.95) 0%, 
+            rgba(248, 250, 252, 0.95) 100%);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 32px;
+          box-shadow: 
+            0 32px 64px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .glassmorphism-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.5), transparent);
+        }
+        
+        .floating-animation {
+          animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          33% { transform: translateY(-10px) rotate(1deg); }
+          66% { transform: translateY(-5px) rotate(-1deg); }
+        }
+        
+        .hover-lift {
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hover-lift:hover {
+          transform: translateY(-8px) scale(1.02);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
         @media (max-width: 768px) {
           .container {
             padding-left: 1rem;
@@ -540,6 +592,19 @@ export default function ResultPage() {
           
           .grid {
             grid-template-columns: 1fr;
+          }
+          
+          .type-title-highlight {
+            font-size: 3rem;
+          }
+        }
+        
+        /* アクセシビリティ対応 */
+        @media (prefers-reduced-motion: reduce) {
+          .floating-animation,
+          .hover-lift {
+            animation: none;
+            transition: none;
           }
         }
       `}</style>
