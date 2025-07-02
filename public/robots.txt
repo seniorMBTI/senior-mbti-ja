@@ -1,0 +1,56 @@
+# ロボット.txt - シニアMBTI日本語版
+
+User-agent: *
+Allow: /
+
+# サイトマップの場所
+Sitemap: https://nkth90d1y.vercel.app/sitemap.xml
+
+# 重要なページの優先クロール指定
+Allow: /
+Allow: /survey
+Allow: /result/*
+
+# クロールを制限するファイル/ディレクトリ
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /.well-known/
+Disallow: /temp/
+Disallow: /private/
+
+# 検索エンジン別の最適化設定
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+User-agent: Yandex
+Allow: /
+Crawl-delay: 3
+
+# クロール頻度の制御
+# 人気ページは頻繁にクロール
+Allow: /result/intj
+Allow: /result/enfp
+Allow: /result/infj
+Allow: /result/entp
+
+# メタデータファイルの除外
+Disallow: *.json$
+Disallow: *.xml$
+Disallow: *.log$
+Disallow: *.tmp$
+
+# キャッシュとビルドファイルの除外
+Disallow: /node_modules/
+Disallow: /.next/
+Disallow: /build/
+Disallow: /dist/
+
+# Vercel固有のファイル除外
+Disallow: /vercel.json
+Disallow: /.vercel/
