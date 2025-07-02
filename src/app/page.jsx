@@ -21,7 +21,7 @@ export default function HomePage() {
       ko: '시니어 MBTI - 성격 유형 테스트',
       en: 'Senior MBTI - Personality Type Test',
       zh: '银发族MBTI - 性格类型测试',
-      ja: 'シニアMBTI - 성격タイプテスト'
+      ja: 'シニアMBTI - 性格タイプテスト'
     };
     
     if (typeof document !== 'undefined') {
@@ -125,15 +125,15 @@ export default function HomePage() {
               <div className="trust-indicators">
                 <span className="trust-item">
                   <span className="trust-icon">👥</span>
-                  <span className="trust-text">100% 익명</span>
+                  <span className="trust-text">100% 匿名</span>
                 </span>
                 <span className="trust-item">
                   <span className="trust-icon">🏆</span>
-                  <span className="trust-text">전문가 제작</span>
+                  <span className="trust-text">専門家制作</span>
                 </span>
                 <span className="trust-item">
                   <span className="trust-icon">⚡</span>
-                  <span className="trust-text">2분 완성</span>
+                  <span className="trust-text">2分で完了</span>
                 </span>
               </div>
             </div>
@@ -146,10 +146,10 @@ export default function HomePage() {
         <div className="container">
           <div className="features-header">
             <h2 className="features-title">
-              왜 시니어 MBTI를 선택해야 할까요?
+              なぜシニアMBTIを選ぶべきでしょうか？
             </h2>
             <p className="features-subtitle">
-              당신의 풍부한 인생 경험을 바탕으로 한 정확한 성격 분석
+              あなたの豊富な人生経験に基づく正確な性格分析
             </p>
           </div>
 
@@ -309,7 +309,7 @@ export default function HomePage() {
 
         .language-selector-wrapper {
           position: relative;
-          z-index: 10;
+          z-index: 999999;
           display: flex;
           justify-content: flex-end;
           padding: 24px 0;

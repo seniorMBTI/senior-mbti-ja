@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const languages = [
   { 
     code: 'ko', 
-    name: '한국어', 
+    name: 'KR',
     localName: '한국어',
     flag: '🇰🇷',
     bgColor: 'bg-red-50',
@@ -15,7 +15,7 @@ const languages = [
   },
   { 
     code: 'en', 
-    name: 'English', 
+    name: 'US',
     localName: 'English',
     flag: '🇺🇸',
     bgColor: 'bg-blue-50',
@@ -24,8 +24,8 @@ const languages = [
   },
   { 
     code: 'zh', 
-    name: '中文', 
-    localName: '中文 (简体)',
+    name: 'CN',
+    localName: '中文',
     flag: '🇨🇳',
     bgColor: 'bg-yellow-50',
     borderColor: 'border-yellow-200',
@@ -33,7 +33,7 @@ const languages = [
   },
   { 
     code: 'ja', 
-    name: '日本語', 
+    name: 'JP',
     localName: '日本語',
     flag: '🇯🇵',
     bgColor: 'bg-pink-50',
@@ -42,9 +42,19 @@ const languages = [
   }
 ];
 
+// 언어별 헤더 텍스트
+const headerTexts = {
+  ko: '언어 선택',
+  en: 'Language',
+  zh: '语言选择',
+  ja: '言語選択'
+};
+
 export default function LanguageSelector() {
   const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
+  const modalRef = useRef(null);
+  const buttonRef = useRef(null);
   
   const currentLanguage = languages.find(lang => lang.code === language);
 
@@ -53,14 +63,52 @@ export default function LanguageSelector() {
     setIsOpen(false);
     
     // 접근성을 위한 포커스 관리
-    document.getElementById('language-selector-button')?.focus();
+    if (buttonRef.current) {
+      buttonRef.current.focus();
+    }
   };
+
+  const handleClose = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(false);
+    
+    // 포커스 복원
+    if (buttonRef.current) {
+      buttonRef.current.focus();
+    }
+  };
+
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      setIsOpen(false);
+    }
+  };
+
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleEscKey = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'hidden'; // 스크롤 방지
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   return (
     <div className="language-selector-container">
       {/* 현재 선택된 언어 버튼 */}
       <button
-        id="language-selector-button"
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className={`
           language-selector-button
@@ -95,20 +143,23 @@ export default function LanguageSelector() {
         <>
           <div 
             className="language-overlay" 
-            onClick={() => setIsOpen(false)}
+            onClick={handleOverlayClick}
             aria-hidden="true"
           />
           <div 
+            ref={modalRef}
             className="language-dropdown"
-            role="listbox"
+            role="dialog"
+            aria-modal="true"
             aria-label="언어 선택"
           >
             <div className="language-dropdown-header">
-              <h3>언어 선택 / Language</h3>
+              <h3>{headerTexts[language] || headerTexts.ko}</h3>
               <button
                 className="language-close-button"
-                onClick={() => setIsOpen(false)}
+                onClick={handleClose}
                 aria-label="언어 선택 닫기"
+                type="button"
               >
                 ✕
               </button>
@@ -129,12 +180,12 @@ export default function LanguageSelector() {
                   role="option"
                   aria-selected={language === lang.code}
                   aria-label={`${lang.localName} 선택`}
+                  type="button"
                 >
                   <div className="language-option-content">
                     <span className="language-option-flag">{lang.flag}</span>
                     <div className="language-option-text">
-                      <span className="language-option-name">{lang.name}</span>
-                      <span className="language-option-local">{lang.localName}</span>
+                      <span className="language-option-name">{lang.name} {lang.localName}</span>
                     </div>
                     {language === lang.code && (
                       <div className="language-check">
@@ -154,7 +205,7 @@ export default function LanguageSelector() {
       <style jsx>{`
         .language-selector-container {
           position: relative;
-          z-index: 50;
+          z-index: 999999;
         }
 
         .language-selector-button {
@@ -166,10 +217,12 @@ export default function LanguageSelector() {
           background: white;
           cursor: pointer;
           transition: all 0.3s ease;
-          min-width: 180px;
+          min-width: 140px;
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          font-size: 16px;
+          font-size: 14px;
           font-weight: 600;
+          position: relative;
+          z-index: 999999;
         }
 
         .language-selector-button:focus {
@@ -185,7 +238,7 @@ export default function LanguageSelector() {
         }
 
         .language-flag {
-          font-size: 28px;
+          font-size: 20px;
           line-height: 1;
         }
 
@@ -197,21 +250,21 @@ export default function LanguageSelector() {
         }
 
         .language-name {
-          font-size: 16px;
+          font-size: 14px;
           font-weight: 700;
           color: #1F2937;
           line-height: 1.2;
         }
 
         .language-local {
-          font-size: 13px;
+          font-size: 11px;
           color: #6B7280;
           font-weight: 500;
         }
 
         .language-arrow {
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           color: #6B7280;
           transition: transform 0.3s ease;
           flex-shrink: 0;
@@ -225,7 +278,8 @@ export default function LanguageSelector() {
           position: fixed;
           inset: 0;
           background: rgba(0, 0, 0, 0.5);
-          z-index: 40;
+          z-index: 999998;
+          cursor: pointer;
         }
 
         .language-dropdown {
@@ -233,12 +287,12 @@ export default function LanguageSelector() {
           top: calc(100% + 8px);
           right: 0;
           background: white;
-          border-radius: 20px;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+          border-radius: 16px;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
           border: 2px solid #E5E7EB;
-          min-width: 320px;
-          max-width: 400px;
-          z-index: 50;
+          min-width: 240px;
+          max-width: 280px;
+          z-index: 999999;
           overflow: hidden;
         }
 
@@ -246,60 +300,74 @@ export default function LanguageSelector() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 20px 24px;
+          padding: 16px 20px;
           border-bottom: 2px solid #F3F4F6;
           background: #F9FAFB;
         }
 
         .language-dropdown-header h3 {
-          font-size: 18px;
+          font-size: 16px;
           font-weight: 700;
           color: #1F2937;
           margin: 0;
         }
 
         .language-close-button {
-          width: 32px;
-          height: 32px;
+          width: 28px;
+          height: 28px;
           border: none;
           background: #E5E7EB;
-          border-radius: 8px;
+          border-radius: 6px;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 16px;
+          font-size: 14px;
           color: #6B7280;
           transition: all 0.2s ease;
+          z-index: 1000000;
+          position: relative;
         }
 
         .language-close-button:hover {
           background: #D1D5DB;
           color: #374151;
+          transform: scale(1.05);
+        }
+
+        .language-close-button:active {
+          transform: scale(0.95);
         }
 
         .language-grid {
-          padding: 16px;
+          padding: 12px;
           display: grid;
-          gap: 12px;
+          gap: 8px;
         }
 
         .language-option {
           display: flex;
           align-items: center;
-          padding: 16px 20px;
+          padding: 12px 16px;
           border: 2px solid;
-          border-radius: 16px;
+          border-radius: 12px;
           background: white;
           cursor: pointer;
           transition: all 0.3s ease;
           width: 100%;
           text-align: left;
+          z-index: 1000000;
+          position: relative;
         }
 
         .language-option:focus {
           outline: 3px solid #3B82F6;
           outline-offset: 2px;
+        }
+
+        .language-option:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .language-option-selected {
@@ -312,11 +380,11 @@ export default function LanguageSelector() {
           display: flex;
           align-items: center;
           width: 100%;
-          gap: 16px;
+          gap: 12px;
         }
 
         .language-option-flag {
-          font-size: 32px;
+          font-size: 24px;
           line-height: 1;
         }
 
@@ -327,21 +395,15 @@ export default function LanguageSelector() {
         }
 
         .language-option-name {
-          font-size: 18px;
-          font-weight: 700;
+          font-size: 14px;
+          font-weight: 600;
           color: #1F2937;
           line-height: 1.3;
         }
 
-        .language-option-local {
-          font-size: 14px;
-          color: #6B7280;
-          font-weight: 500;
-        }
-
         .language-check {
-          width: 24px;
-          height: 24px;
+          width: 20px;
+          height: 20px;
           color: #3B82F6;
           flex-shrink: 0;
         }
@@ -349,27 +411,27 @@ export default function LanguageSelector() {
         /* 모바일 최적화 */
         @media (max-width: 768px) {
           .language-dropdown {
-            right: -16px;
-            left: -16px;
+            right: -8px;
+            left: -8px;
             min-width: auto;
             max-width: none;
           }
 
           .language-selector-button {
-            min-width: 160px;
-            padding: 10px 14px;
+            min-width: 120px;
+            padding: 10px 12px;
           }
 
           .language-flag, .language-option-flag {
-            font-size: 24px;
+            font-size: 18px;
           }
 
           .language-name {
-            font-size: 15px;
+            font-size: 13px;
           }
 
           .language-option-name {
-            font-size: 16px;
+            font-size: 13px;
           }
         }
 

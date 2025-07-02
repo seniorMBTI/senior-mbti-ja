@@ -12,358 +12,457 @@ export default function SurveyPage() {
   const [selectedChoice, setSelectedChoice] = useState(null);
   const { t } = useLanguage();
 
-  // Multilingual questions data
+  // シニア向け最適化 24問 (2択)
   const questions = [
+    // E/I 次元 - 6問
     {
       id: 1,
-      textKey: 'survey.q1.text',
-      text: t('landing.questions.sample'),
+      category: 'E/I',
+      text: '普段、友人や知人とどのように時間を過ごすことを好みますか？',
       choices: [
-        { id: 1, text: t('landing.questions.choice1'), type: 'E' },
-        { id: 2, text: t('landing.questions.choice2'), type: 'I' },
-        { id: 3, text: '상황에 따라 다르다', type: 'N' },
-        { id: 4, text: '잘 모르겠다', type: 'N' }
+        { id: 'A', text: '多くの人と一緒に集まって話や活動をするのが好きです', type: 'E' },
+        { id: 'B', text: '少数の親しい方と静かに対話するのが楽です', type: 'I' }
       ]
     },
     {
       id: 2,
-      textKey: 'survey.q2.text',
-      text: '계획을 세워서 일을 진행하는 것을 선호하시나요?',
+      category: 'E/I',
+      text: '一日が終わって疲れた時、どのような方法で気分転換をしますか？',
       choices: [
-        { id: 1, text: '매우 그렇다 - 미리 계획하는 것이 편하다', type: 'J' },
-        { id: 2, text: '그렇다 - 어느 정도 계획은 필요하다', type: 'J' },
-        { id: 3, text: '그렇지 않다 - 유연하게 대응하는 편이다', type: 'P' },
-        { id: 4, text: '전혀 그렇지 않다 - 즉흥적인 것이 좋다', type: 'P' }
+        { id: 'A', text: '家族や友人と対話をして一緒に時間を過ごします', type: 'E' },
+        { id: 'B', text: '一人の時間を持ち、静かに休息を取ります', type: 'I' }
       ]
     },
     {
       id: 3,
-      textKey: 'survey.q3.text', 
-      text: '새로운 정보를 받아들일 때 어떤 방식을 선호하시나요?',
+      category: 'E/I',
+      text: '新しい人と出会った時、どのような様子ですか？',
       choices: [
-        { id: 1, text: '구체적이고 실용적인 정보를 좋아한다', type: 'S' },
-        { id: 2, text: '전체적인 맥락과 의미를 파악하려 한다', type: 'N' },
-        { id: 3, text: '경험을 통해 직접 확인하고 싶다', type: 'S' },
-        { id: 4, text: '가능성과 잠재력을 생각해본다', type: 'N' }
+        { id: 'A', text: '先に近づいて挨拶をし、会話を始めます', type: 'E' },
+        { id: 'B', text: '相手から先に声をかけてくれるのを待ちます', type: 'I' }
       ]
     },
     {
       id: 4,
-      textKey: 'survey.q4.text',
-      text: '중요한 결정을 내릴 때 무엇을 더 중요하게 생각하시나요?',
+      category: 'E/I',
+      text: '週末や休日にどのような活動を好みますか？',
       choices: [
-        { id: 1, text: '논리적 분석과 객관적 사실', type: 'T' },
-        { id: 2, text: '사람들의 감정과 관계', type: 'F' },
-        { id: 3, text: '공정성과 원칙', type: 'T' },
-        { id: 4, text: '조화와 배려', type: 'F' }
+        { id: 'A', text: '友人や家族と一緒にお出かけや集まりに参加します', type: 'E' },
+        { id: 'B', text: '家で読書、映画鑑賞など一人で楽しむことをします', type: 'I' }
+      ]
+    },
+    {
+      id: 5,
+      category: 'E/I',
+      text: '電話での会話についてどのような好みがありますか？',
+      choices: [
+        { id: 'A', text: '電話で話すのが好きで、よく通話をします', type: 'E' },
+        { id: 'B', text: '緊急でない限り、文字やメッセージで連絡することを好みます', type: 'I' }
+      ]
+    },
+    {
+      id: 6,
+      category: 'E/I',
+      text: '講演や集まりではどのような様子ですか？',
+      choices: [
+        { id: 'A', text: '積極的に発言し、他の人と意見を交換します', type: 'E' },
+        { id: 'B', text: '主に聞く側で、慎重に考えてから話します', type: 'I' }
+      ]
+    },
+    
+    // S/N 次元 - 6問
+    {
+      id: 7,
+      category: 'S/N',
+      text: '新しいことを学ぶ時、どのような方法を好みますか？',
+      choices: [
+        { id: 'A', text: '具体的な事実と実際の経験を通して着実に学びます', type: 'S' },
+        { id: 'B', text: '全体的な意味と可能性を先に把握しようとします', type: 'N' }
+      ]
+    },
+    {
+      id: 8,
+      category: 'S/N',
+      text: '問題を解決する時、どのような方法を好みますか？',
+      choices: [
+        { id: 'A', text: '過去の経験と実証された方法を活用します', type: 'S' },
+        { id: 'B', text: '新しいアイデアと創造的な解決策を探します', type: 'N' }
+      ]
+    },
+    {
+      id: 9,
+      category: 'S/N',
+      text: '会話する時、どのような話題を好みますか？',
+      choices: [
+        { id: 'A', text: '日常の具体的な話や実用的な情報を共有します', type: 'S' },
+        { id: 'B', text: '未来への夢や哲学的な思考を共有します', type: 'N' }
+      ]
+    },
+    {
+      id: 10,
+      category: 'S/N',
+      text: '旅行を計画する時、何に重点を置きますか？',
+      choices: [
+        { id: 'A', text: '過去に行ったことがある場所や有名な場所を好みます', type: 'S' },
+        { id: 'B', text: '初めて行く場所や予想しない発見を期待します', type: 'N' }
+      ]
+    },
+    {
+      id: 11,
+      category: 'S/N',
+      text: '仕事をする時、どのような方法を好みますか？',
+      choices: [
+        { id: 'A', text: '段階的に着実に進めながら詳細をチェックします', type: 'S' },
+        { id: 'B', text: '全体的な流れを把握し、大きな絵を先に描きます', type: 'N' }
+      ]
+    },
+    {
+      id: 12,
+      category: 'S/N',
+      text: '本を読んだり映画を見る時、どのような内容を好みますか？',
+      choices: [
+        { id: 'A', text: '現実的で実際の経験を扱った内容を好みます', type: 'S' },
+        { id: 'B', text: '想像力を刺激し、新しい世界を見せてくれる内容を好みます', type: 'N' }
+      ]
+    },
+    
+    // T/F 次元 - 6問
+    {
+      id: 13,
+      category: 'T/F',
+      text: '重要な決定をする時、何を最も重要に考えますか？',
+      choices: [
+        { id: 'A', text: '客観的な事実と論理的な分析に基づいて判断します', type: 'T' },
+        { id: 'B', text: '関連する人々の気持ちと関係を優先的に考慮します', type: 'F' }
+      ]
+    },
+    {
+      id: 14,
+      category: 'T/F',
+      text: '他の人が失敗した時、どのように対応しますか？',
+      choices: [
+        { id: 'A', text: '問題の原因と解決方案に集中して指摘します', type: 'T' },
+        { id: 'B', text: '相手の気持ちを察し、励ましと慰めを先にします', type: 'F' }
+      ]
+    },
+    {
+      id: 15,
+      category: 'T/F',
+      text: '議論や対立状況でどのような態度を取りますか？',
+      choices: [
+        { id: 'A', text: '事実と論理に基づいて公正な判断を下します', type: 'T' },
+        { id: 'B', text: 'すべての人の気持ちを察し、調和を図ろうと努力します', type: 'F' }
+      ]
+    },
+    {
+      id: 16,
+      category: 'T/F',
+      text: 'アドバイスをする時、どのような方法で助けますか？',
+      choices: [
+        { id: 'A', text: '将来に役立つ実用的な解決策を提示します', type: 'T' },
+        { id: 'B', text: '相手の感情に共感し、慰めと励ましをします', type: 'F' }
+      ]
+    },
+    {
+      id: 17,
+      category: 'T/F',
+      text: '他の人を評価する時、何をより重要に考えますか？',
+      choices: [
+        { id: 'A', text: 'その人の能力と成果、客観的な成果を冷静に評価します', type: 'T' },
+        { id: 'B', text: 'その人の意図と努力、人間的な面を先に考慮します', type: 'F' }
+      ]
+    },
+    {
+      id: 18,
+      category: 'T/F',
+      text: '重要なことを決定する時、どのような基準をより重視しますか？',
+      choices: [
+        { id: 'A', text: '公正性と原則、一貫性のある基準を重視します', type: 'T' },
+        { id: 'B', text: '人間的な情緒と個人的な状況を優先考慮します', type: 'F' }
+      ]
+    },
+    
+    // J/P 次元 - 6問
+    {
+      id: 19,
+      category: 'J/P',
+      text: '日常生活をどのように管理することを好みますか？',
+      choices: [
+        { id: 'A', text: '事前に計画を立て、スケジュールに合わせて体系的に進めます', type: 'J' },
+        { id: 'B', text: '状況に応じて柔軟に対応し、自然に流れるようにします', type: 'P' }
+      ]
+    },
+    {
+      id: 20,
+      category: 'J/P',
+      text: 'まだ終わっていない仕事がある時、気分はどうですか？',
+      choices: [
+        { id: 'A', text: '早く終わらせたくて気持ちが不快で気になります', type: 'J' },
+        { id: 'B', text: '急がなくても大丈夫で、ゆっくり進めても構いません', type: 'P' }
+      ]
+    },
+    {
+      id: 21,
+      category: 'J/P',
+      text: '約束や計画についてどう思いますか？',
+      choices: [
+        { id: 'A', text: '約束は必ず守るべき重要な約束だと思います', type: 'J' },
+        { id: 'B', text: '状況に応じて変更できる柔軟なガイドラインだと思います', type: 'P' }
+      ]
+    },
+    {
+      id: 22,
+      category: 'J/P',
+      text: '旅行に出かける時、どのようなスタイルを好みますか？',
+      choices: [
+        { id: 'A', text: '事前にスケジュールと宿泊、観光地をすべて予約してから行きます', type: 'J' },
+        { id: 'B', text: '大まかな計画だけ立て、旅行先で即座に決定します', type: 'P' }
+      ]
+    },
+    {
+      id: 23,
+      category: 'J/P',
+      text: '仕事を進める時、どのような方法を好みますか？',
+      choices: [
+        { id: 'A', text: '最初から最後まで段階的に順序通りに進めます', type: 'J' },
+        { id: 'B', text: '私がやりたい部分から始めて自由に進めます', type: 'P' }
+      ]
+    },
+    {
+      id: 24,
+      category: 'J/P',
+      text: '選択をしなければならない状況ではどのような様子ですか？',
+      choices: [
+        { id: 'A', text: '十分に悩んだ後決定すれば変えません', type: 'J' },
+        { id: 'B', text: '選択を先延ばしにして最後の瞬間に決定することが多いです', type: 'P' }
       ]
     }
   ];
 
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
-  const currentQ = questions[currentQuestion];
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      document.title = 'シニアMBTI性格テスト';
+    }
+  }, []);
 
-  const handleChoiceSelect = (choiceId) => {
-    setSelectedChoice(choiceId);
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
+
+  const handleAnswerSelect = (choice) => {
+    setSelectedChoice(choice);
   };
 
   const handleNext = () => {
-    if (selectedChoice === null) return;
+    if (selectedChoice) {
+      const newAnswers = [...answers, {
+        questionId: questions[currentQuestion].id,
+        choice: selectedChoice.id,
+        type: selectedChoice.type,
+        category: questions[currentQuestion].category
+      }];
+      
+      setAnswers(newAnswers);
+      setSelectedChoice(null);
 
-    const newAnswers = [...answers, selectedChoice];
-    setAnswers(newAnswers);
-    setSelectedChoice(null);
-
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      handleSubmit(newAnswers);
+      if (currentQuestion === questions.length - 1) {
+        // テスト完了、結果を計算
+        calculateAndRedirect(newAnswers);
+      } else {
+        setCurrentQuestion(currentQuestion + 1);
+      }
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
-      setSelectedChoice(answers[currentQuestion - 1] || null);
-      const newAnswers = answers.slice(0, -1);
-      setAnswers(newAnswers);
+      setAnswers(answers.slice(0, -1));
+      setSelectedChoice(null);
     }
   };
 
-  const handleSubmit = async (finalAnswers) => {
+  const calculateAndRedirect = async (finalAnswers) => {
     setIsSubmitting(true);
     
-    // Simple MBTI calculation
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const score = finalAnswers.reduce((sum, answer) => sum + answer, 0);
-    const resultId = score > 8 ? 'ENFJ' : 'INTJ';
-    
-    router.push(`/result/${resultId}`);
+    try {
+      // MBTIタイプを計算
+      const scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+      
+      finalAnswers.forEach(answer => {
+        scores[answer.type]++;
+      });
+
+      const mbtiType = 
+        (scores.E > scores.I ? 'E' : 'I') +
+        (scores.S > scores.N ? 'S' : 'N') +
+        (scores.T > scores.F ? 'T' : 'F') +
+        (scores.J > scores.P ? 'J' : 'P');
+
+      // 結果IDを生成
+      const resultId = Date.now().toString();
+      
+      // localStorageに保存
+      const resultData = {
+        mbtiType,
+        scores,
+        answers: finalAnswers,
+        completedAt: new Date().toISOString(),
+        language: 'ja'
+      };
+      
+      localStorage.setItem(`mbti-result-${resultId}`, JSON.stringify(resultData));
+      
+      // 結果ページにリダイレクト
+      router.push(`/result/${resultId}`);
+      
+    } catch (error) {
+      console.error('Error calculating results:', error);
+      alert('結果計算でエラーが発生しました。再試行してください。');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (e.key >= '1' && e.key <= '4') {
-        const choiceIndex = parseInt(e.key) - 1;
-        if (choiceIndex < currentQ.choices.length) {
-          setSelectedChoice(currentQ.choices[choiceIndex].id);
-        }
-      } else if (e.key === 'Enter' && selectedChoice !== null) {
-        handleNext();
-      } else if (e.key === 'Escape') {
-        router.push('/');
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedChoice, currentQ, router]);
+  const currentQ = questions[currentQuestion];
 
   return (
     <div className="survey-container">
-      {/* Header */}
-      <header className="survey-header">
-        <div className="container">
-          <div className="header-content">
-            <button 
-              onClick={() => router.push('/')}
-              className="back-button"
-              aria-label="홈으로 돌아가기"
-            >
-              ← {t('survey.home')}
-            </button>
-            
-            <div className="progress-info">
-              <span className="question-counter">
-                {currentQuestion + 1} / {questions.length}
-              </span>
-            </div>
-          </div>
+      {/* 進捗バー */}
+      <div className="progress-header">
+        <div className="progress-info">
+          <span className="progress-text">第 {currentQuestion + 1} 問 / 全 {questions.length} 問</span>
+          <span className="progress-percent">{Math.round(progress)}%</span>
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="survey-main">
-        <div className="container">
-          {/* Progress Bar */}
-          <div className="progress-section">
-            <div className="progress-label">
-              <span className="progress-text">{t('survey.progress')}</span>
-              <span className="progress-percentage">{Math.round(progress)}%</span>
-            </div>
-            <div className="progress-bar">
-              <div 
-                className="progress-fill"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Question Card */}
-          <div className="question-card">
-            <div className="question-header">
-              <div className="question-number">
-                <span className="question-icon">❓</span>
-                <span className="question-label">
-                  {t('survey.question')} {currentQuestion + 1}
-                </span>
-              </div>
-              
-              {currentQuestion < questions.length - 1 ? (
-                <div className="remaining-questions">
-                  {questions.length - currentQuestion - 1}개 남음
-                </div>
-              ) : (
-                <div className="final-question">
-                  마지막 질문입니다!
-                </div>
-              )}
-            </div>
-
-            <div className="question-content">
-              <h2 className="question-text">
-                {currentQ.text}
-              </h2>
-              
-              <p className="question-hint">
-                {t('survey.hint')}
-              </p>
-
-              <div className="choices-grid">
-                {currentQ.choices.map((choice, index) => (
-                  <button
-                    key={choice.id}
-                    onClick={() => handleChoiceSelect(choice.id)}
-                    className={`choice-button ${
-                      selectedChoice === choice.id ? 'choice-selected' : ''
-                    }`}
-                    aria-label={`선택지 ${index + 1}: ${choice.text}`}
-                  >
-                    <div className="choice-number">
-                      {index + 1}
-                    </div>
-                    <div className="choice-content">
-                      <span className="choice-text">{choice.text}</span>
-                    </div>
-                    <div className="choice-indicator">
-                      {selectedChoice === choice.id && (
-                        <svg className="check-icon" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="navigation">
-            <button
-              onClick={handlePrevious}
-              disabled={currentQuestion === 0}
-              className="nav-button nav-previous"
-            >
-              <span className="nav-icon">←</span>
-              <span className="nav-text">{t('survey.previous')}</span>
-            </button>
-
-            <div className="nav-center">
-              <div className="keyboard-hint">
-                💡 키보드 1-4 숫자키로 선택 가능
-              </div>
-            </div>
-
-            <button
-              onClick={handleNext}
-              disabled={selectedChoice === null}
-              className={`nav-button nav-next ${isSubmitting ? 'nav-submitting' : ''}`}
-            >
-              <span className="nav-text">
-                {isSubmitting ? t('survey.processing') : 
-                 currentQuestion === questions.length - 1 ? t('survey.submit') : t('survey.next')}
-              </span>
-              {isSubmitting ? (
-                <div className="loading-spinner">
-                  <div className="spinner"></div>
-                </div>
-              ) : (
-                <span className="nav-icon">→</span>
-              )}
-            </button>
-          </div>
+        <div className="progress-bar">
+          <div 
+            className="progress-fill" 
+            style={{ width: `${progress}%` }}
+          ></div>
         </div>
-      </main>
+      </div>
+
+      {/* 質問カード */}
+      <div className="question-card">
+        <div className="question-category">
+          {currentQ.category} 次元 · 第 {currentQuestion + 1} 問
+        </div>
+        
+        <h2 className="question-text">
+          {currentQ.text}
+        </h2>
+
+        <div className="choices-container">
+          {currentQ.choices.map((choice) => (
+            <button
+              key={choice.id}
+              className={`choice-button ${selectedChoice?.id === choice.id ? 'selected' : ''}`}
+              onClick={() => handleAnswerSelect(choice)}
+            >
+              <div className="choice-label">{choice.id}</div>
+              <div className="choice-text">{choice.text}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ナビゲーションボタン */}
+      <div className="navigation-buttons">
+        <button
+          className="nav-button prev-button"
+          onClick={handlePrevious}
+          disabled={currentQuestion === 0}
+        >
+          前の問題
+        </button>
+        
+        <button
+          className="nav-button next-button"
+          onClick={handleNext}
+          disabled={!selectedChoice || isSubmitting}
+        >
+          {isSubmitting ? '計算中...' : 
+           currentQuestion === questions.length - 1 ? '結果を見る' : '次の問題'}
+        </button>
+      </div>
 
       <style jsx>{`
         .survey-container {
           min-height: 100vh;
-          background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          position: relative;
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
         }
 
-        .container {
-          max-width: 900px;
-          margin: 0 auto;
-          padding: 0 20px;
+        .survey-container::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: 
+            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 120, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120, 219, 226, 0.2) 0%, transparent 50%);
+          pointer-events: none;
         }
 
-        /* Header */
-        .survey-header {
-          background: white;
-          border-bottom: 1px solid #e5e7eb;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          position: sticky;
-          top: 0;
+        .progress-header {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 24px;
+          padding: 32px;
+          margin-bottom: 32px;
+          box-shadow: 
+            0 32px 64px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+          position: relative;
           z-index: 10;
-        }
-
-        .header-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 16px 0;
-        }
-
-        .back-button {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          background: #f3f4f6;
-          border: 1px solid #d1d5db;
-          border-radius: 12px;
-          padding: 12px 16px;
-          font-size: 14px;
-          font-weight: 600;
-          color: #374151;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .back-button:hover {
-          background: #e5e7eb;
-          border-color: #9ca3af;
         }
 
         .progress-info {
           display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .question-counter {
-          background: #eff6ff;
-          color: #1d4ed8;
-          padding: 8px 16px;
-          border-radius: 20px;
-          font-size: 14px;
-          font-weight: 700;
-        }
-
-        /* Main Content */
-        .survey-main {
-          padding: 40px 0;
-        }
-
-        /* Progress Section */
-        .progress-section {
-          margin-bottom: 40px;
-        }
-
-        .progress-label {
-          display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 12px;
+          margin-bottom: 20px;
         }
 
         .progress-text {
-          font-size: 16px;
-          font-weight: 600;
-          color: #374151;
+          font-size: 20px;
+          font-weight: 700;
+          color: #1F2937;
+          background: linear-gradient(45deg, #1F2937, #4F46E5);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
-        .progress-percentage {
-          font-size: 18px;
-          font-weight: 700;
-          color: #1d4ed8;
+        .progress-percent {
+          font-size: 24px;
+          font-weight: 800;
+          background: linear-gradient(45deg, #4F46E5, #7C3AED);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
         }
 
         .progress-bar {
           width: 100%;
           height: 12px;
-          background: #e5e7eb;
-          border-radius: 6px;
+          background: rgba(229, 231, 235, 0.8);
+          border-radius: 12px;
           overflow: hidden;
+          box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-          border-radius: 6px;
-          transition: width 0.6s ease;
+          background: linear-gradient(90deg, #4F46E5, #7C3AED, #EC4899);
+          border-radius: 12px;
+          transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 
+            0 0 20px rgba(79, 70, 229, 0.5),
+            inset 0 1px 2px rgba(255, 255, 255, 0.3);
           position: relative;
         }
 
@@ -371,317 +470,355 @@ export default function SurveyPage() {
           content: '';
           position: absolute;
           top: 0;
-          left: 0;
           right: 0;
           bottom: 0;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-          animation: shimmer 2s infinite;
+          width: 20px;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4));
+          animation: shine 2s infinite;
         }
 
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
+        @keyframes shine {
+          0% { transform: translateX(-20px); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translateX(20px); opacity: 0; }
         }
 
-        /* Question Card */
         .question-card {
-          background: white;
-          border-radius: 24px;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 32px;
+          padding: 48px;
+          margin-bottom: 32px;
+          box-shadow: 
+            0 32px 64px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+          flex: 1;
+          position: relative;
+          z-index: 10;
           overflow: hidden;
-          margin-bottom: 40px;
         }
 
-        .question-header {
-          background: linear-gradient(45deg, #667eea, #764ba2);
-          padding: 24px 32px;
-          display: flex;
-          justify-content: space-between;
+        .question-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.5), transparent);
+        }
+
+        .question-category {
+          display: inline-flex;
           align-items: center;
-        }
-
-        .question-number {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .question-icon {
-          font-size: 24px;
-        }
-
-        .question-label {
+          background: linear-gradient(135deg, #4F46E5, #7C3AED);
           color: white;
-          font-size: 18px;
+          padding: 12px 24px;
+          border-radius: 25px;
+          font-size: 16px;
           font-weight: 700;
+          margin-bottom: 32px;
+          box-shadow: 
+            0 8px 25px rgba(79, 70, 229, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          position: relative;
+          overflow: hidden;
         }
 
-        .remaining-questions,
-        .final-question {
-          color: rgba(255, 255, 255, 0.9);
-          font-size: 14px;
-          font-weight: 600;
-          background: rgba(255, 255, 255, 0.2);
-          padding: 8px 16px;
-          border-radius: 20px;
+        .question-category::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          animation: categoryShine 3s infinite;
         }
 
-        .final-question {
-          background: linear-gradient(45deg, #f59e0b, #eab308);
-        }
-
-        .question-content {
-          padding: 40px 32px;
+        @keyframes categoryShine {
+          0% { left: -100%; }
+          100% { left: 100%; }
         }
 
         .question-text {
-          font-size: 24px;
-          font-weight: 700;
-          color: #1f2937;
-          line-height: 1.4;
-          margin: 0 0 16px 0;
+          font-size: 32px;
+          font-weight: 800;
+          background: linear-gradient(135deg, #1F2937, #4F46E5);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          line-height: 1.3;
+          margin-bottom: 48px;
+          position: relative;
         }
 
-        .question-hint {
-          font-size: 16px;
-          color: #6b7280;
-          margin: 0 0 32px 0;
-          text-align: center;
-          padding: 12px 20px;
-          background: #f9fafb;
-          border-radius: 12px;
-          border-left: 4px solid #3b82f6;
-        }
-
-        .choices-grid {
-          display: grid;
-          gap: 16px;
+        .choices-container {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
         }
 
         .choice-button {
           display: flex;
           align-items: center;
-          gap: 20px;
-          padding: 20px 24px;
-          background: #f8fafc;
-          border: 2px solid #e2e8f0;
-          border-radius: 16px;
+          gap: 24px;
+          padding: 32px;
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(10px);
+          border: 2px solid rgba(229, 231, 235, 0.8);
+          border-radius: 24px;
           cursor: pointer;
-          transition: all 0.3s ease;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           text-align: left;
           width: 100%;
           position: relative;
+          overflow: hidden;
+        }
+
+        .choice-button::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(124, 58, 237, 0.05));
+          opacity: 0;
+          transition: opacity 0.3s ease;
         }
 
         .choice-button:hover {
-          border-color: #3b82f6;
-          background: #eff6ff;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+          border-color: rgba(79, 70, 229, 0.5);
+          background: rgba(255, 255, 255, 0.95);
+          transform: translateY(-4px) scale(1.02);
+          box-shadow: 
+            0 20px 40px rgba(79, 70, 229, 0.15),
+            0 0 0 1px rgba(79, 70, 229, 0.1);
         }
 
-        .choice-selected {
-          border-color: #3b82f6 !important;
-          background: #eff6ff !important;
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        .choice-button:hover::before {
+          opacity: 1;
         }
 
-        .choice-number {
-          width: 40px;
-          height: 40px;
-          background: #3b82f6;
+        .choice-button.selected {
+          border-color: #4F46E5;
+          background: linear-gradient(135deg, 
+            rgba(238, 242, 255, 0.9), 
+            rgba(243, 232, 255, 0.9));
+          box-shadow: 
+            0 0 0 2px rgba(79, 70, 229, 0.3),
+            0 20px 40px rgba(79, 70, 229, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+          transform: translateY(-2px) scale(1.01);
+        }
+
+        .choice-button.selected::before {
+          opacity: 1;
+        }
+
+        .choice-label {
+          width: 56px;
+          height: 56px;
+          background: linear-gradient(135deg, #4F46E5, #7C3AED);
           color: white;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: 700;
-          font-size: 18px;
+          font-size: 24px;
+          font-weight: 800;
           flex-shrink: 0;
+          box-shadow: 
+            0 8px 25px rgba(79, 70, 229, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          position: relative;
+          overflow: hidden;
         }
 
-        .choice-selected .choice-number {
-          background: #1d4ed8;
-        }
-
-        .choice-content {
-          flex: 1;
+        .choice-label::after {
+          content: '';
+          position: absolute;
+          inset: 2px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2));
         }
 
         .choice-text {
-          font-size: 16px;
-          font-weight: 500;
+          font-size: 20px;
+          font-weight: 600;
           color: #374151;
           line-height: 1.5;
+          flex: 1;
         }
 
-        .choice-indicator {
-          width: 24px;
-          height: 24px;
-          color: #3b82f6;
-          flex-shrink: 0;
-        }
-
-        .check-icon {
-          width: 24px;
-          height: 24px;
-        }
-
-        /* Navigation */
-        .navigation {
+        .navigation-buttons {
           display: flex;
           justify-content: space-between;
-          align-items: center;
-          gap: 20px;
+          gap: 24px;
+          position: relative;
+          z-index: 10;
         }
 
         .nav-button {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 16px 24px;
-          border-radius: 16px;
-          font-size: 16px;
-          font-weight: 600;
+          flex: 1;
+          padding: 20px 32px;
+          border: none;
+          border-radius: 20px;
+          font-size: 20px;
+          font-weight: 700;
           cursor: pointer;
-          transition: all 0.3s ease;
-          border: 2px solid;
-          min-width: 140px;
-          justify-content: center;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
         }
 
-        .nav-previous {
-          background: white;
-          color: #6b7280;
-          border-color: #d1d5db;
+        .prev-button {
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(10px);
+          color: #6B7280;
+          border: 2px solid rgba(229, 231, 235, 0.8);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
-        .nav-previous:hover:not(:disabled) {
-          background: #f3f4f6;
-          border-color: #9ca3af;
+        .prev-button:hover:not(:disabled) {
+          background: rgba(255, 255, 255, 0.95);
+          border-color: #D1D5DB;
+          color: #374151;
+          transform: translateY(-2px);
+          box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
         }
 
-        .nav-previous:disabled {
-          opacity: 0.4;
+        .prev-button:disabled {
+          opacity: 0.5;
           cursor: not-allowed;
         }
 
-        .nav-next {
-          background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+        .next-button {
+          background: linear-gradient(135deg, #4F46E5, #7C3AED);
           color: white;
-          border-color: #3b82f6;
+          box-shadow: 
+            0 8px 25px rgba(79, 70, 229, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
-        .nav-next:hover:not(:disabled) {
-          background: linear-gradient(45deg, #2563eb, #1e40af);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        .next-button::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+          opacity: 0;
+          transition: opacity 0.3s ease;
         }
 
-        .nav-next:disabled {
+        .next-button:hover:not(:disabled) {
+          background: linear-gradient(135deg, #4338CA, #6D28D9);
+          transform: translateY(-4px);
+          box-shadow: 
+            0 16px 40px rgba(79, 70, 229, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .next-button:hover:not(:disabled)::before {
+          opacity: 1;
+        }
+
+        .next-button:disabled {
           opacity: 0.6;
           cursor: not-allowed;
           transform: none;
         }
 
-        .nav-center {
-          flex: 1;
-          text-align: center;
-        }
-
-        .keyboard-hint {
-          font-size: 14px;
-          color: #6b7280;
-          background: white;
-          padding: 8px 16px;
-          border-radius: 8px;
-          border: 1px solid #e5e7eb;
-        }
-
-        .loading-spinner {
-          margin-left: 8px;
-        }
-
-        .spinner {
-          width: 16px;
-          height: 16px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          border-top: 2px solid white;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive Design */
+        /* レスポンシブデザイン */
         @media (max-width: 768px) {
-          .container {
-            padding: 0 16px;
+          .survey-container {
+            padding: 16px;
           }
 
-          .survey-main {
-            padding: 24px 0;
+          .progress-header {
+            padding: 24px;
+            margin-bottom: 24px;
           }
 
-          .question-header {
-            padding: 20px 24px;
-            flex-direction: column;
-            gap: 12px;
-            text-align: center;
-          }
-
-          .question-content {
+          .question-card {
             padding: 32px 24px;
           }
 
           .question-text {
-            font-size: 20px;
+            font-size: 26px;
           }
 
           .choice-button {
-            flex-direction: column;
-            text-align: center;
-            gap: 12px;
-            padding: 20px;
+            padding: 24px 20px;
+            gap: 20px;
           }
 
-          .navigation {
+          .choice-label {
+            width: 48px;
+            height: 48px;
+            font-size: 20px;
+          }
+
+          .choice-text {
+            font-size: 18px;
+          }
+
+          .navigation-buttons {
             flex-direction: column;
             gap: 16px;
           }
 
           .nav-button {
-            width: 100%;
-            max-width: 300px;
-          }
-
-          .nav-center {
-            order: -1;
+            font-size: 18px;
+            padding: 18px 24px;
           }
         }
 
-        /* Animation for reduced motion */
+        /* アクセシビリティ対応 */
         @media (prefers-reduced-motion: reduce) {
           .choice-button,
           .nav-button,
-          .progress-fill {
-            transition: none;
+          .progress-fill,
+          .question-category::before,
+          .progress-fill::after {
             animation: none;
-          }
-          
-          .choice-button:hover {
-            transform: none;
+            transition: none;
           }
         }
 
-        /* High contrast mode */
+        /* 高コントラストモード */
         @media (prefers-contrast: high) {
-          .choice-button,
-          .nav-button {
+          .choice-button {
             border-width: 3px;
+          }
+          
+          .choice-button.selected {
+            border-width: 4px;
+          }
+          
+          .progress-header,
+          .question-card {
+            border-width: 2px;
+          }
+        }
+
+        /* ダークモード対応 */
+        @media (prefers-color-scheme: dark) {
+          .progress-header,
+          .question-card {
+            background: rgba(17, 24, 39, 0.95);
+            border-color: rgba(75, 85, 99, 0.3);
+          }
+          
+          .choice-button {
+            background: rgba(31, 41, 55, 0.9);
+            border-color: rgba(75, 85, 99, 0.5);
+          }
+          
+          .choice-text {
+            color: #E5E7EB;
+          }
+          
+          .progress-text {
+            color: #E5E7EB;
           }
         }
       `}</style>
