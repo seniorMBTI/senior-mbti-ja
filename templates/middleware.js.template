@@ -1,0 +1,25 @@
+import { NextResponse } from 'next/server';
+
+export function middleware(request) {
+  // URL에서 언어 파라미터 추출
+  const url = new URL(request.url);
+  const lang = url.searchParams.get('lang');
+  
+  // 유효한 언어인 경우 쿠키에 저장
+  if (lang && ['ko', 'en', 'zh', 'ja'].includes(lang)) {
+    const response = NextResponse.next();
+    response.cookies.set('language', lang, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 30 // 30일
+    });
+    return response;
+  }
+  
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+}
