@@ -291,6 +291,38 @@ const translations = {
     'compatibility.effort': 'Effort Required',
     'compatibility.cta': 'Check My MBTI Compatibility',
     
+    // Sample Questions Section
+    'landing.questions.title': 'サンプル質問プレビュー',
+    'landing.questions.example': '質問例',
+    'landing.questions.sample': '退職後の活動を計画する際、どちらのアプローチを好みますか？',
+    'landing.questions.choice1': '体系的に計画し、事前に準備する',
+    'landing.questions.choice2': '状況に応じて柔軟に決める',
+    
+    // Internal Links Section
+    'internal.title': 'MBTI性格タイプガイド',
+    'internal.subtitle': '詳細な情報とガイドをご確認ください',
+    
+    // MBTI Category Titles
+    'mbti.analyst.title': '分析家グループ (NT)',
+    'mbti.diplomat.title': '外交官グループ (NF)',
+    'mbti.sentinel.title': '管理者グループ (SJ)',
+    'mbti.explorer.title': '探検家グループ (SP)',
+    
+    // Internal Related Links
+    'internal.related.title': 'シニアライフ関連情報',
+    'internal.related.compatibility': 'MBTI相性分析ガイド',
+    'internal.related.lifestyle': 'シニアライフスタイルヒント',
+    'internal.related.retirement': '退職後人生設計',
+    
+    // Final CTA Section
+    'final.title': '今すぐ始めましょう！あなただけのシニアMBTIの旅',
+    'final.description': '60歳以上の黄金期をより豊かにする性格分析を無料で受けてみてください',
+    'final.cta': '無料シニアMBTIテスト開始',
+    'final.guarantee1': '完全無料',
+    'final.guarantee2': '2分完成',
+    'final.guarantee3': '即時結果',
+    'final.guarantee4': 'プライバシー保護',
+    
     // MBTI Types
     'mbti.intj.name': 'Strategist',
     'mbti.intj.desc': 'Systematic thinking and independent living',
@@ -847,6 +879,26 @@ const translations = {
     'internal.relationships.title': 'シニア人間関係',
     'internal.relationships.desc': '家族、友人、パートナーとの関係改善方法',
     
+    // SEO Content Section
+    'seo.content.title': 'シニアMBTIで発見する新しい人生の可能性',
+    'seo.content.block1.title': '科学的な性格分析',
+    'seo.content.block1.text': '心理学に基づく正確なMBTI診断で、あなたの真の性格を理解し、より良い人間関係を築く方法を学びましょう。',
+    'seo.content.block2.title': 'シニア専用カスタマイズ',
+    'seo.content.block2.text': '60歳以上の方のライフスタイルと価値観に特化した質問と分析で、より実用的で意味のある結果を提供します。',
+    'seo.content.block3.title': '実生活活用ガイド',
+    'seo.content.block3.text': '退職後の生活設計、趣味活動選択、健康管理、人間関係改善など実生活に直接適用できる具体的なアドバイスを提供します。',
+
+    // FAQ Section - Simple format
+    'faq.title': 'よくある質問',
+    'faq.q1': 'このテストは無料ですか？',
+    'faq.a1': 'はい、シニアMBTIテストは完全無料でご利用いただけます。',
+    'faq.q2': '結果はどのように活用できますか？',
+    'faq.a2': '退職後の生活設計、人間関係改善、健康管理などに活用できます。',
+    'faq.q3': 'テストにはどのくらい時間がかかりますか？',
+    'faq.a3': '約5分程度で完了する24の簡単な質問です。',
+    'faq.q4': '個人情報は安全ですか？',
+    'faq.a4': '100%匿名で進行され、個人情報は一切収集しません。',
+
     // Final CTA
     'final.cta.title': '今すぐ始めてください！',
     'final.cta.subtitle': 'あなただけの特別な性格タイプを発見し、より良いシニアライフを設計してください',

@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function ResultPage() {
   const params = useParams();
@@ -10,19 +10,81 @@ export default function ResultPage() {
   const [resultData, setResultData] = useState(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showCopySuccess, setShowCopySuccess] = useState(false);
+  const shareButtonRef = useRef(null);
+  const [modalPosition, setModalPosition] = useState({ top: '50%', left: '50%' });
 
   useEffect(() => {
     setMounted(true);
     
-    // localStorageから結果データを読み込み
+    // localStorageから結果データを読み込みまたはURLパラメータから読み込み
     const resultId = params.id;
     if (resultId && typeof window !== 'undefined') {
+      // まずlocalStorageで試行
       const storedData = localStorage.getItem(`mbti-result-${resultId}`);
       if (storedData) {
         setResultData(JSON.parse(storedData));
+      } else {
+        // localStorageになければURLパラメータを確認 (共有リンク)
+        const urlParams = new URLSearchParams(window.location.search);
+        const mbtiType = urlParams.get('type');
+        const isShared = urlParams.get('shared');
+        
+        if (mbtiType && isShared) {
+          // URLからMBTIタイプを取得して結果データを生成
+          const mockResultData = {
+            mbtiType: mbtiType,
+            timestamp: Date.now(),
+            isSharedLink: true
+          };
+          setResultData(mockResultData);
+        }
       }
     }
   }, [params.id]);
+
+  // MBTI結果に基づくメタタグの動的更新
+  useEffect(() => {
+    if (resultData && mounted) {
+      const mbtiType = resultData.mbtiType;
+      const mbtiInfo = mbtiTypes[mbtiType];
+      
+      if (mbtiInfo) {
+        // ページタイトル更新
+        document.title = `${mbtiType} ${mbtiInfo.name} - シニアMBTI結果`;
+        
+        // Open Graphメタタグ更新
+        const updateMetaTag = (property, content) => {
+          let meta = document.querySelector(`meta[property="${property}"]`);
+          if (!meta) {
+            meta = document.createElement('meta');
+            meta.setAttribute('property', property);
+            document.head.appendChild(meta);
+          }
+          meta.setAttribute('content', content);
+        };
+
+        const updateNameMetaTag = (name, content) => {
+          let meta = document.querySelector(`meta[name="${name}"]`);
+          if (!meta) {
+            meta = document.createElement('meta');
+            meta.setAttribute('name', name);
+            document.head.appendChild(meta);
+          }
+          meta.setAttribute('content', content);
+        };
+
+        // メタタグ更新
+        updateMetaTag('og:title', `${mbtiType} ${mbtiInfo.name} - シニアMBTI結果`);
+        updateMetaTag('og:description', `あなたのMBTIは${mbtiType} ${mbtiInfo.name}です。${mbtiInfo.subtitle} ${mbtiInfo.description.substring(0, 100)}...`);
+        updateMetaTag('og:image', `https://senior-mbti-ja.vercel.app/og-result.png`);
+        
+        updateNameMetaTag('description', `あなたのMBTIは${mbtiType} ${mbtiInfo.name}です。${mbtiInfo.subtitle} ${mbtiInfo.description.substring(0, 100)}...`);
+        updateNameMetaTag('twitter:title', `${mbtiType} ${mbtiInfo.name} - シニアMBTI結果`);
+        updateNameMetaTag('twitter:description', `あなたのMBTIは${mbtiType} ${mbtiInfo.name}です。${mbtiInfo.subtitle}`);
+        updateNameMetaTag('twitter:image', `https://senior-mbti-ja.vercel.app/og-result.png`);
+      }
+    }
+  }, [resultData, mounted]);
 
   // MBTIタイプ別相性情報
   const mbtiCompatibility = {
@@ -322,9 +384,47 @@ export default function ResultPage() {
     }
   };
 
+  const handleShareClick = () => {
+    if (shareButtonRef.current) {
+      const rect = shareButtonRef.current.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+      
+      // 모바일에서도 버튼 중심으로 표시하되, 화면 경계 고려
+      let top = rect.top + scrollTop + rect.height / 2;
+      let left = rect.left + scrollLeft + rect.width / 2;
+      
+      // 모바일 화면에서 경계를 벗어나지 않도록 조정
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        const modalWidth = Math.min(400, window.innerWidth - 40);
+        const modalHeight = 200; // 대략적인 모달 높이
+        
+        // 좌우 경계 체크
+        if (left - modalWidth / 2 < 20) {
+          left = modalWidth / 2 + 20;
+        } else if (left + modalWidth / 2 > window.innerWidth - 20) {
+          left = window.innerWidth - modalWidth / 2 - 20;
+        }
+        
+        // 상하 경계 체크
+        if (top - modalHeight / 2 < 20) {
+          top = modalHeight / 2 + 20;
+        } else if (top + modalHeight / 2 > window.innerHeight + scrollTop - 20) {
+          top = window.innerHeight + scrollTop - modalHeight / 2 - 20;
+        }
+      }
+      
+      setModalPosition({ top, left });
+    }
+    setShowShareDialog(true);
+  };
+
   const copyResultLink = () => {
-    if (mounted && typeof window !== 'undefined') {
-      navigator.clipboard.writeText(window.location.href);
+    if (mounted && typeof window !== 'undefined' && resultData) {
+      // URLにMBTI情報をクエリパラメータとして追加して共有
+      const shareUrl = `${window.location.origin}${window.location.pathname}?type=${resultData.mbtiType}&shared=true`;
+      navigator.clipboard.writeText(shareUrl);
       setShowCopySuccess(true);
       setTimeout(() => {
         setShowCopySuccess(false);
@@ -389,8 +489,9 @@ export default function ResultPage() {
           
           <div className="action-buttons">
             <button 
+              ref={shareButtonRef}
               className="share-button"
-              onClick={() => setShowShareDialog(true)}
+              onClick={handleShareClick}
             >
               <span>🔗</span> 結果を共有する
             </button>
@@ -502,8 +603,8 @@ export default function ResultPage() {
 
           <div className="compatibility-card challenging-match">
             <div className="compatibility-header">
-              <h3>💛 理解が必要</h3>
-              <p>お互いの理解と配慮が必要なタイプ</p>
+              <h3>💔 最悪の相性</h3>
+              <p>調和を保つために多大な努力と理解が必要なタイプ</p>
             </div>
             <div className="compatibility-types">
               {mbtiCompatibility[resultData.mbtiType]?.challengingMatch.map((type, index) => (
@@ -559,7 +660,18 @@ export default function ResultPage() {
       {/* 共有モーダル */}
       {showShareDialog && (
         <div className="modal-overlay" onClick={() => setShowShareDialog(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div 
+            className="modal-content" 
+            style={{
+              position: 'absolute',
+              top: modalPosition.top,
+              left: modalPosition.left,
+              transform: 'translate(-50%, -50%)',
+              maxWidth: '90vw',
+              maxHeight: '90vh'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <h3>結果を共有する</h3>
               <button 

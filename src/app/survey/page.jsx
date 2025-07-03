@@ -564,10 +564,7 @@ export default function SurveyPage() {
         .question-text {
           font-size: 32px;
           font-weight: 800;
-          background: linear-gradient(135deg, #1F2937, #4F46E5);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: white;
           line-height: 1.3;
           margin-bottom: 48px;
           position: relative;

@@ -1,7 +1,8 @@
 {
   "/_not-found": "app/_not-found.js",
-  "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/page": "app/page.js",
+  "/api/og/route": "app/api/og/route.js",
+  "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/result/[id]/page": "app/result/[id]/page.js",
   "/survey/page": "app/survey/page.js"
 }
