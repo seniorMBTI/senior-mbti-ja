@@ -59,12 +59,23 @@ export default function LanguageSelector() {
   const currentLanguage = languages.find(lang => lang.code === language);
 
   const handleLanguageSelect = (langCode) => {
-    setLanguage(langCode);
     setIsOpen(false);
     
-    // 접근성을 위한 포커스 관리
-    if (buttonRef.current) {
-      buttonRef.current.focus();
+    // 도메인별 리디렉션
+    const domainMap = {
+      'ko': 'https://kr.seniormbti.com',
+      'en': 'https://seniormbti.com',
+      'zh': 'https://cn.seniormbti.com', 
+      'ja': 'https://jp.seniormbti.com'
+    };
+    
+    if (domainMap[langCode]) {
+      window.location.href = domainMap[langCode];
+    } else {
+      setLanguage(langCode);
+      if (buttonRef.current) {
+        buttonRef.current.focus();
+      }
     }
   };
 

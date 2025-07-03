@@ -17,17 +17,10 @@ export default function HomePage() {
 
   // 언어별 타이틀 동적 설정
   useEffect(() => {
-    const titles = {
-      ko: '시니어 MBTI - 성격 유형 테스트',
-      en: 'Senior MBTI - Personality Type Test',
-      zh: '银发族MBTI - 性格类型测试',
-      ja: 'シニアMBTI - 性格タイプテスト'
-    };
-    
     if (typeof document !== 'undefined') {
-      document.title = titles[language] || titles.ko;
+      document.title = t('meta.title');
     }
-  }, [language]);
+  }, [language, t]);
 
   const handleStartTest = () => {
     setIsStarting(true);
@@ -69,6 +62,11 @@ export default function HomePage() {
 
   return (
     <div className="landing-container">
+      {/* SEO 최적화 메인 헤더 */}
+      <header className="seo-header">
+        <h1 className="visually-hidden">{t('meta.seo.title')}</h1>
+      </header>
+
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-background">
@@ -89,27 +87,27 @@ export default function HomePage() {
           {/* Hero Content */}
           <div className="hero-content">
             <div className="hero-badge">
-              <span className="badge-text">✨ {t('landing.welcome')}</span>
+              <span className="badge-text">{t('hero.badge')}</span>
             </div>
             
-            <h1 className="hero-title">
-              <span className="title-highlight">{t('landing.title')}</span>
-            </h1>
+            <h2 className="hero-title">
+              <span className="title-highlight">{t('hero.title')}</span>
+            </h2>
             
             <p className="hero-tagline">
-              {t('landing.tagline')}
+              {t('hero.tagline')}
             </p>
             
             <p className="hero-description">
-              {t('landing.description')}
+              {t('hero.description')}
             </p>
             
             <div className="hero-seo-hook">
               <p className="seo-hook-main">
-                <strong>🔍 あなたのMBTIを確認し、相性の良いMBTIタイプを見つけましょう！</strong>
+                <strong>{t('hero.seo.hook.main')}</strong>
               </p>
               <p className="seo-hook-sub">
-                これからの人生で、あなたと相性の良い人々を特定し、素晴らしい人生のパートナーをみつけましょう！
+                {t('hero.seo.hook.sub')}
               </p>
             </div>
 
@@ -134,15 +132,15 @@ export default function HomePage() {
               <div className="trust-indicators">
                 <span className="trust-item">
                   <span className="trust-icon">👥</span>
-                  <span className="trust-text">100% 匿名</span>
+                  <span className="trust-text">{t('trust.anonymous')}</span>
                 </span>
                 <span className="trust-item">
                   <span className="trust-icon">🏆</span>
-                  <span className="trust-text">専門家制作</span>
+                  <span className="trust-text">{t('trust.expert')}</span>
                 </span>
                 <span className="trust-item">
                   <span className="trust-icon">⚡</span>
-                  <span className="trust-text">2分で完了</span>
+                  <span className="trust-text">{t('trust.quick')}</span>
                 </span>
               </div>
             </div>
@@ -155,11 +153,21 @@ export default function HomePage() {
         <div className="container">
           <div className="features-header">
             <h2 className="features-title">
-              なぜシニアMBTIを選ぶべきでしょうか？
+              {t('features.section.title')}
             </h2>
             <p className="features-subtitle">
-              あなたの豊富な人生経験に基づく正確な性格分析
+              {t('features.section.subtitle')}
             </p>
+            <div className="seo-benefits">
+              <h3 className="seo-benefits-title">{t('seo.benefits.title')}</h3>
+              <ul className="benefits-list">
+                <li>✅ <strong>{t('seo.benefits.item1.highlight')}</strong>{t('seo.benefits.item1.text')}</li>
+                <li>✅ <strong>{t('seo.benefits.item2.highlight')}</strong>{t('seo.benefits.item2.text')}</li>
+                <li>✅ <strong>{t('seo.benefits.item3.highlight')}</strong>{t('seo.benefits.item3.text')}</li>
+                <li>✅ <strong>{t('seo.benefits.item4.highlight')}</strong>{t('seo.benefits.item4.text')}</li>
+                <li>✅ <strong>{t('seo.benefits.item5.highlight')}</strong>{t('seo.benefits.item5.text')}</li>
+              </ul>
+            </div>
           </div>
 
           <div className="features-grid">
@@ -187,79 +195,79 @@ export default function HomePage() {
         <div className="container">
           <div className="showcase-header">
             <h2 className="showcase-title">
-              💕 MBTI相性分析プレビュー
+              {t('compatibility.showcase.title')}
             </h2>
             <p className="showcase-subtitle">
-              あなたと最も相性の良いMBTIタイプと、努力が必要なMBTIタイプをプレビュー
+              {t('compatibility.showcase.subtitle')}
             </p>
           </div>
 
           <div className="compatibility-examples">
             <div className="example-card best-match-example">
               <div className="example-header">
-                <h3 className="example-title">💖 理想的な組み合わせ例</h3>
-                <p className="example-subtitle">INTJ × ENFP 組み合わせ</p>
+                <h3 className="example-title">{t('compatibility.best.title')}</h3>
+                <p className="example-subtitle">{t('compatibility.best.example')}</p>
               </div>
               <div className="mbti-cards">
                 <div className="mbti-card intj-card">
                   <div className="mbti-type">INTJ</div>
-                  <div className="mbti-name">建築家</div>
+                  <div className="mbti-name">{t('mbti.intj.name')}</div>
                   <div className="mbti-traits">
-                    <span className="trait">戦略的</span>
-                    <span className="trait">独立的</span>
-                    <span className="trait">先見的</span>
+                    <span className="trait">{t('mbti.intj.trait1')}</span>
+                    <span className="trait">{t('mbti.intj.trait2')}</span>
+                    <span className="trait">{t('mbti.intj.trait3')}</span>
                   </div>
                 </div>
                 <div className="compatibility-indicator">
                   <div className="heart-icon">💖</div>
-                  <div className="compatibility-text">完璧な調和</div>
+                  <div className="compatibility-text">{t('compatibility.perfect')}</div>
                 </div>
                 <div className="mbti-card enfp-card">
                   <div className="mbti-type">ENFP</div>
-                  <div className="mbti-name">運動家</div>
+                  <div className="mbti-name">{t('mbti.enfp.name')}</div>
                   <div className="mbti-traits">
-                    <span className="trait">情熱的</span>
-                    <span className="trait">创造的</span>
-                    <span className="trait">社交的</span>
+                    <span className="trait">{t('mbti.enfp.trait1')}</span>
+                    <span className="trait">{t('mbti.enfp.trait2')}</span>
+                    <span className="trait">{t('mbti.enfp.trait3')}</span>
                   </div>
                 </div>
               </div>
               <div className="compatibility-reason">
-                <p>戦略的なINTJと創造的なENFPはお互いを補完し合い、相互理解と尊敬に基づいた深い関係を築きます。</p>
+                <p>{t('compatibility.best.reason')}</p>
               </div>
             </div>
 
             <div className="example-card challenging-match-example">
               <div className="example-header">
-                <h3 className="example-title">💛 成長の機会例</h3>
-                <p className="example-subtitle">INTJ × ESFJ 組み合わせ</p>
+                <h3 className="example-title">{t('compatibility.challenging.title')}</h3>
+                <p className="example-subtitle">{t('compatibility.challenging.example')}</p>
               </div>
               <div className="mbti-cards">
                 <div className="mbti-card intj-card">
                   <div className="mbti-type">INTJ</div>
-                  <div className="mbti-name">建築家</div>
+                  <div className="mbti-name">{t('mbti.intj.name')}</div>
                   <div className="mbti-traits">
-                    <span className="trait">論理的</span>
-                    <span className="trait">独立的</span>
-                    <span className="trait">計画的</span>
+                    <span className="trait">{t('mbti.intj.trait1')}</span>
+                    <span className="trait">{t('mbti.intj.trait2')}</span>
+                    <span className="trait">{t('mbti.intj.trait3')}</span>
                   </div>
                 </div>
                 <div className="compatibility-indicator challenging">
                   <div className="heart-icon">💛</div>
-                  <div className="compatibility-text">努力が必要</div>
+                  <div className="compatibility-text">{t('compatibility.effort')}</div>
                 </div>
                 <div className="mbti-card esfj-card">
                   <div className="mbti-type">ESFJ</div>
-                  <div className="mbti-name">領事</div>
+                  <div className="mbti-name">{t('mbti.esfj.name')}</div>
                   <div className="mbti-traits">
-                    <span className="trait">思いやり</span>
-                    <span className="trait">社交的</span>
-                    <span className="trait">協調的</span>
+                    <span className="trait">{t('mbti.esfj.trait1')}</span>
+                    <span className="trait">{t('mbti.esfj.trait2')}</span>
+                    <span className="trait">{t('mbti.esfj.trait3')}</span>
                   </div>
                 </div>
               </div>
               <div className="compatibility-reason">
-                <p>アプローチ方法は異なりますが、相互理解と配慮を通じてバランスの取れた豊かな関係を築くことができます。</p>
+                <p>{t('compatibility.challenging.reason')}</p>
               </div>
             </div>
           </div>
@@ -270,13 +278,13 @@ export default function HomePage() {
               className="showcase-cta-button"
             >
               <span>🎯</span>
-              私のMBTI相性を発見する
+              {t('compatibility.cta')}
             </button>
           </div>
         </div>
       </section>
 
-      {/* Sample Question Section */
+      {/* Sample Question Section */}
       <section className="sample-section">
         <div className="container">
           <div className="sample-card">
@@ -313,13 +321,205 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* SEO 컨텐츠 섹션 */}
+      <section className="seo-content-section">
+        <div className="container">
+          <div className="seo-content">
+            <h2 className="seo-content-title">{t('seo.content.title')}</h2>
+            
+            <div className="content-grid">
+              <div className="content-block">
+                <h3>{t('seo.content.block1.title')}</h3>
+                <p>{t('seo.content.block1.text')}</p>
+              </div>
+              
+              <div className="content-block">
+                <h3>{t('seo.content.block2.title')}</h3>
+                <p>{t('seo.content.block2.text')}</p>
+              </div>
+              
+              <div className="content-block">
+                <h3>{t('seo.content.block3.title')}</h3>
+                <p>{t('seo.content.block3.text')}</p>
+              </div>
+            </div>
+            
+            <div className="faq-section">
+              <h3 className="faq-title">{t('faq.title')}</h3>
+              <div className="faq-list">
+                <div className="faq-item">
+                  <h4 className="faq-question">{t('faq.q1')}</h4>
+                  <p className="faq-answer">{t('faq.a1')}</p>
+                </div>
+                
+                <div className="faq-item">
+                  <h4 className="faq-question">{t('faq.q2')}</h4>
+                  <p className="faq-answer">{t('faq.a2')}</p>
+                </div>
+                
+                <div className="faq-item">
+                  <h4 className="faq-question">{t('faq.q3')}</h4>
+                  <p className="faq-answer">{t('faq.a3')}</p>
+                </div>
+                
+                <div className="faq-item">
+                  <h4 className="faq-question">{t('faq.q4')}</h4>
+                  <p className="faq-answer">{t('faq.a4')}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MBTI 유형별 내부 링크 섹션 */}
+      <section className="internal-links-section">
+        <div className="container">
+          <div className="internal-links-header">
+            <h2 className="internal-links-title">
+              {t('internal.title')}
+            </h2>
+            <p className="internal-links-subtitle">
+              {t('internal.subtitle')}
+            </p>
+          </div>
+          
+          <div className="mbti-grid">
+            <div className="mbti-category analyst">
+              <h3 className="category-title">{t('mbti.analyst.title')}</h3>
+              <div className="mbti-types">
+                <a href="/result/intj" className="mbti-link intj">
+                  <span className="mbti-code">INTJ</span>
+                  <span className="mbti-name">{t('mbti.intj.name')}</span>
+                  <span className="mbti-desc">{t('mbti.intj.desc')}</span>
+                </a>
+                <a href="/result/intp" className="mbti-link intp">
+                  <span className="mbti-code">INTP</span>
+                  <span className="mbti-name">{t('mbti.intp.name')}</span>
+                  <span className="mbti-desc">{t('mbti.intp.desc')}</span>
+                </a>
+                <a href="/result/entj" className="mbti-link entj">
+                  <span className="mbti-code">ENTJ</span>
+                  <span className="mbti-name">{t('mbti.entj.name')}</span>
+                  <span className="mbti-desc">{t('mbti.entj.desc')}</span>
+                </a>
+                <a href="/result/entp" className="mbti-link entp">
+                  <span className="mbti-code">ENTP</span>
+                  <span className="mbti-name">{t('mbti.entp.name')}</span>
+                  <span className="mbti-desc">{t('mbti.entp.desc')}</span>
+                </a>
+              </div>
+            </div>
+            
+            <div className="mbti-category diplomat">
+              <h3 className="category-title">{t('mbti.diplomat.title')}</h3>
+              <div className="mbti-types">
+                <a href="/result/infj" className="mbti-link infj">
+                  <span className="mbti-code">INFJ</span>
+                  <span className="mbti-name">{t('mbti.infj.name')}</span>
+                  <span className="mbti-desc">{t('mbti.infj.desc')}</span>
+                </a>
+                <a href="/result/infp" className="mbti-link infp">
+                  <span className="mbti-code">INFP</span>
+                  <span className="mbti-name">{t('mbti.infp.name')}</span>
+                  <span className="mbti-desc">{t('mbti.infp.desc')}</span>
+                </a>
+                <a href="/result/enfj" className="mbti-link enfj">
+                  <span className="mbti-code">ENFJ</span>
+                  <span className="mbti-name">{t('mbti.enfj.name')}</span>
+                  <span className="mbti-desc">{t('mbti.enfj.desc')}</span>
+                </a>
+                <a href="/result/enfp" className="mbti-link enfp">
+                  <span className="mbti-code">ENFP</span>
+                  <span className="mbti-name">{t('mbti.enfp.name')}</span>
+                  <span className="mbti-desc">{t('mbti.enfp.desc')}</span>
+                </a>
+              </div>
+            </div>
+            
+            <div className="mbti-category sentinel">
+              <h3 className="category-title">{t('mbti.sentinel.title')}</h3>
+              <div className="mbti-types">
+                <a href="/result/istj" className="mbti-link istj">
+                  <span className="mbti-code">ISTJ</span>
+                  <span className="mbti-name">{t('mbti.istj.name')}</span>
+                  <span className="mbti-desc">{t('mbti.istj.desc')}</span>
+                </a>
+                <a href="/result/isfj" className="mbti-link isfj">
+                  <span className="mbti-code">ISFJ</span>
+                  <span className="mbti-name">{t('mbti.isfj.name')}</span>
+                  <span className="mbti-desc">{t('mbti.isfj.desc')}</span>
+                </a>
+                <a href="/result/estj" className="mbti-link estj">
+                  <span className="mbti-code">ESTJ</span>
+                  <span className="mbti-name">{t('mbti.estj.name')}</span>
+                  <span className="mbti-desc">{t('mbti.estj.desc')}</span>
+                </a>
+                <a href="/result/esfj" className="mbti-link esfj">
+                  <span className="mbti-code">ESFJ</span>
+                  <span className="mbti-name">{t('mbti.esfj.name')}</span>
+                  <span className="mbti-desc">{t('mbti.esfj.desc')}</span>
+                </a>
+              </div>
+            </div>
+            
+            <div className="mbti-category explorer">
+              <h3 className="category-title">{t('mbti.explorer.title')}</h3>
+              <div className="mbti-types">
+                <a href="/result/istp" className="mbti-link istp">
+                  <span className="mbti-code">ISTP</span>
+                  <span className="mbti-name">{t('mbti.istp.name')}</span>
+                  <span className="mbti-desc">{t('mbti.istp.desc')}</span>
+                </a>
+                <a href="/result/isfp" className="mbti-link isfp">
+                  <span className="mbti-code">ISFP</span>
+                  <span className="mbti-name">{t('mbti.isfp.name')}</span>
+                  <span className="mbti-desc">{t('mbti.isfp.desc')}</span>
+                </a>
+                <a href="/result/estp" className="mbti-link estp">
+                  <span className="mbti-code">ESTP</span>
+                  <span className="mbti-name">{t('mbti.estp.name')}</span>
+                  <span className="mbti-desc">{t('mbti.estp.desc')}</span>
+                </a>
+                <a href="/result/esfp" className="mbti-link esfp">
+                  <span className="mbti-code">ESFP</span>
+                  <span className="mbti-name">{t('mbti.esfp.name')}</span>
+                  <span className="mbti-desc">{t('mbti.esfp.desc')}</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div className="related-links">
+            <h3 className="related-title">{t('internal.related.title')}</h3>
+            <div className="related-grid">
+              <a href="/mbti-compatibility" className="related-link">
+                <span className="related-icon">💕</span>
+                <span className="related-text">{t('internal.related.compatibility')}</span>
+              </a>
+              <a href="/senior-lifestyle" className="related-link">
+                <span className="related-icon">🌿</span>
+                <span className="related-text">{t('internal.related.lifestyle')}</span>
+              </a>
+              <a href="/retirement-planning" className="related-link">
+                <span className="related-icon">🏡</span>
+                <span className="related-text">{t('internal.related.retirement')}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA Section */}
       <section className="final-cta-section">
         <div className="container">
           <div className="final-cta-content">
             <h2 className="final-cta-title">
-              {t('landing.closing')}
+              {t('final.title')}
             </h2>
+            <p className="final-cta-description">
+              {t('final.description')}
+            </p>
             <button
               onClick={handleStartTest}
               disabled={isStarting}
@@ -327,9 +527,15 @@ export default function HomePage() {
             >
               <span className="final-cta-icon">✨</span>
               <span className="final-cta-text">
-                {isStarting ? t('landing.starting') : t('landing.start')}
+                {isStarting ? t('final.starting') : t('final.cta')}
               </span>
             </button>
+            <div className="final-guarantees">
+              <span className="guarantee-item">{t('final.guarantee1')}</span>
+              <span className="guarantee-item">{t('final.guarantee2')}</span>
+              <span className="guarantee-item">{t('final.guarantee3')}</span>
+              <span className="guarantee-item">{t('final.guarantee4')}</span>
+            </div>
           </div>
         </div>
       </section>
@@ -727,6 +933,140 @@ export default function HomePage() {
           line-height: 1.5;
         }
 
+        /* SEO Header */
+        .seo-header {
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+
+        .visually-hidden {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+
+        /* SEO Benefits */
+        .seo-benefits {
+          margin-top: 40px;
+          padding: 32px;
+          background: rgba(102, 126, 234, 0.05);
+          border-radius: 16px;
+          border-left: 4px solid #667eea;
+        }
+
+        .seo-benefits-title {
+          font-size: 24px;
+          font-weight: 700;
+          color: #1F2937;
+          margin-bottom: 20px;
+        }
+
+        .benefits-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .benefits-list li {
+          font-size: 16px;
+          color: #374151;
+          margin-bottom: 12px;
+          line-height: 1.6;
+        }
+
+        /* SEO Content Section */
+        .seo-content-section {
+          background: #F8FAFC;
+          padding: 100px 0;
+        }
+
+        .seo-content-title {
+          font-size: clamp(2rem, 5vw, 3rem);
+          font-weight: 800;
+          color: #1F2937;
+          text-align: center;
+          margin-bottom: 60px;
+        }
+
+        .content-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+          gap: 40px;
+          margin-bottom: 80px;
+        }
+
+        .content-block {
+          background: white;
+          padding: 32px;
+          border-radius: 16px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+          border-left: 4px solid #667eea;
+        }
+
+        .content-block h3 {
+          font-size: 24px;
+          font-weight: 700;
+          color: #1F2937;
+          margin-bottom: 16px;
+        }
+
+        .content-block p {
+          font-size: 16px;
+          color: #374151;
+          line-height: 1.7;
+          margin: 0;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+          background: white;
+          padding: 40px;
+          border-radius: 16px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .faq-title {
+          font-size: 32px;
+          font-weight: 800;
+          color: #1F2937;
+          text-align: center;
+          margin-bottom: 40px;
+        }
+
+        .faq-list {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .faq-item {
+          padding: 24px;
+          background: #F8FAFC;
+          border-radius: 12px;
+          border-left: 4px solid #667eea;
+        }
+
+        .faq-question {
+          font-size: 18px;
+          font-weight: 700;
+          color: #1F2937;
+          margin-bottom: 12px;
+        }
+
+        .faq-answer {
+          font-size: 16px;
+          color: #374151;
+          line-height: 1.6;
+          margin: 0;
+        }
+
         /* Final CTA Section */
         .final-cta-section {
           background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
@@ -738,8 +1078,29 @@ export default function HomePage() {
           font-size: clamp(1.5rem, 4vw, 2.5rem);
           font-weight: 700;
           color: white;
-          margin: 0 0 40px 0;
+          margin: 0 0 20px 0;
           line-height: 1.3;
+        }
+
+        .final-cta-description {
+          font-size: 20px;
+          color: rgba(255, 255, 255, 0.8);
+          margin-bottom: 40px;
+          line-height: 1.5;
+        }
+
+        .final-guarantees {
+          display: flex;
+          justify-content: center;
+          gap: 24px;
+          margin-top: 24px;
+          flex-wrap: wrap;
+        }
+
+        .guarantee-item {
+          font-size: 14px;
+          color: rgba(255, 255, 255, 0.9);
+          font-weight: 600;
         }
 
         .final-cta-button {
@@ -1063,28 +1424,63 @@ export default function HomePage() {
             font-size: 24px;
             margin-bottom: 0;
           }
+
+          /* SEO Content Mobile */
+          .seo-content-section {
+            padding: 60px 0;
+          }
+
+          .content-grid {
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 60px;
+          }
+
+          .content-block {
+            padding: 24px;
+          }
+
+          .faq-section {
+            padding: 24px;
+          }
+
+          .faq-item {
+            padding: 20px;
+          }
+
+          .final-guarantees {
+            gap: 12px;
+          }
+
+          .benefits-list li {
+            font-size: 14px;
+          }
+
+          .seo-benefits {
+            padding: 24px;
+          }
         }
 
-        /* MBTI Types Section */
-        .mbti-types-section {
-          background: white;
+        /* 내부 링크 섹션 */
+        .internal-links-section {
+          background: #F8FAFC;
           padding: 100px 0;
         }
 
-        .types-header {
+        .internal-links-header {
           text-align: center;
-          margin-bottom: 80px;
+          margin-bottom: 60px;
         }
 
-        .types-title {
+        .internal-links-title {
           font-size: clamp(2rem, 5vw, 3rem);
           font-weight: 800;
           color: #1F2937;
           margin-bottom: 16px;
         }
 
-        .types-subtitle {
-          font-size: clamp(1rem, 3vw, 1.25rem);
+        .internal-links-subtitle {
+          font-size: 18px;
           color: #6B7280;
           margin: 0;
           line-height: 1.6;
@@ -1092,95 +1488,93 @@ export default function HomePage() {
 
         .mbti-grid {
           display: grid;
-          gap: 60px;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 40px;
           margin-bottom: 80px;
         }
 
-        .mbti-group {
-          background: #F8FAFC;
-          border-radius: 24px;
-          padding: 40px;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-          border: 1px solid #E5E7EB;
-        }
-
-        .nt-group { border-top: 4px solid #8B5CF6; }
-        .nf-group { border-top: 4px solid #EF4444; }
-        .sj-group { border-top: 4px solid #10B981; }
-        .sp-group { border-top: 4px solid #F59E0B; }
-
-        .group-title {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          font-size: 28px;
-          font-weight: 700;
-          color: #1F2937;
-          margin-bottom: 12px;
-        }
-
-        .group-icon {
-          font-size: 32px;
-        }
-
-        .group-description {
-          font-size: 16px;
-          color: #6B7280;
-          margin-bottom: 32px;
-          text-align: left;
-        }
-
-        .types-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 20px;
-        }
-
-        .type-link {
-          text-decoration: none;
-          display: block;
-          transition: transform 0.3s ease;
-        }
-
-        .type-link:hover {
-          transform: translateY(-4px);
-        }
-
-        .type-card {
+        .mbti-category {
           background: white;
-          border-radius: 16px;
-          padding: 24px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          border-radius: 20px;
+          padding: 32px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
           border: 1px solid #E5E7EB;
-          text-align: center;
           transition: all 0.3s ease;
         }
 
-        .type-card:hover {
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-          border-color: #9CA3AF;
+        .mbti-category:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
         }
 
-        .type-code {
-          font-size: 24px;
+        .mbti-category.analyst {
+          border-top: 4px solid #8B5CF6;
+        }
+
+        .mbti-category.diplomat {
+          border-top: 4px solid #F59E0B;
+        }
+
+        .mbti-category.sentinel {
+          border-top: 4px solid #3B82F6;
+        }
+
+        .mbti-category.explorer {
+          border-top: 4px solid #10B981;
+        }
+
+        .category-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: #1F2937;
+          margin-bottom: 24px;
+          text-align: center;
+        }
+
+        .mbti-types {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .mbti-link {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          padding: 16px;
+          background: #F8FAFC;
+          border: 1px solid #E5E7EB;
+          border-radius: 12px;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          color: inherit;
+        }
+
+        .mbti-link:hover {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+          border-color: #667eea;
+          transform: translateX(4px);
+        }
+
+        .mbti-code {
+          font-size: 18px;
           font-weight: 900;
           background: linear-gradient(135deg, #667eea, #764ba2);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          margin-bottom: 8px;
+          background-clip: text;
         }
 
-        .type-name {
-          font-size: 18px;
+        .mbti-name {
+          font-size: 14px;
           font-weight: 600;
           color: #374151;
-          margin-bottom: 12px;
         }
 
-        .type-traits {
-          font-size: 14px;
+        .mbti-desc {
+          font-size: 12px;
           color: #6B7280;
-          line-height: 1.5;
+          line-height: 1.4;
         }
 
         .related-links {
@@ -1191,96 +1585,74 @@ export default function HomePage() {
           font-size: 28px;
           font-weight: 700;
           color: #1F2937;
-          margin-bottom: 40px;
+          margin-bottom: 32px;
         }
 
         .related-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 32px;
-          max-width: 1000px;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 24px;
+          max-width: 800px;
           margin: 0 auto;
         }
 
         .related-link {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding: 24px;
+          background: white;
+          border: 2px solid #E5E7EB;
+          border-radius: 16px;
           text-decoration: none;
-          display: block;
-          transition: transform 0.3s ease;
+          color: inherit;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .related-link:hover {
-          transform: translateY(-4px);
-        }
-
-        .related-card {
-          background: white;
-          border-radius: 20px;
-          padding: 32px;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-          border: 1px solid #E5E7EB;
-          text-align: center;
-          transition: all 0.3s ease;
-        }
-
-        .related-card:hover {
-          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+          border-color: #667eea;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
         }
 
         .related-icon {
-          font-size: 48px;
-          margin-bottom: 16px;
-          display: block;
+          font-size: 24px;
+          flex-shrink: 0;
         }
 
-        .related-card h4 {
-          font-size: 20px;
+        .related-text {
+          font-size: 16px;
           font-weight: 600;
-          color: #1F2937;
-          margin-bottom: 12px;
+          color: #374151;
         }
 
-        .related-card p {
-          font-size: 14px;
-          color: #6B7280;
-          line-height: 1.6;
-          margin: 0;
-        }
-
-        /* Mobile responsiveness for MBTI Types Section */
+        /* 내부 링크 모바일 반응형 */
         @media (max-width: 768px) {
-          .mbti-types-section {
+          .internal-links-section {
             padding: 60px 0;
           }
 
           .mbti-grid {
-            gap: 40px;
+            grid-template-columns: 1fr;
+            gap: 24px;
             margin-bottom: 60px;
           }
 
-          .mbti-group {
+          .mbti-category {
             padding: 24px;
-          }
-
-          .group-title {
-            font-size: 24px;
-          }
-
-          .types-grid {
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-          }
-
-          .type-card {
-            padding: 20px;
           }
 
           .related-grid {
             grid-template-columns: 1fr;
-            gap: 24px;
+            gap: 16px;
           }
 
-          .related-card {
-            padding: 24px;
+          .related-link {
+            padding: 20px;
+            flex-direction: column;
+            text-align: center;
+            gap: 12px;
           }
         }
 
@@ -1293,7 +1665,8 @@ export default function HomePage() {
           .final-cta-button,
           .example-card,
           .showcase-cta-button,
-          .type-link,
+          .mbti-category,
+          .mbti-link,
           .related-link {
             animation: none;
             transition: none;
