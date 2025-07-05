@@ -323,6 +323,17 @@ export default function SurveyPage() {
                          'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
       
       if (validTypes.includes(mbtiType)) {
+        // localStorageに保存（バックアップ用）
+        const resultData = {
+          mbtiType,
+          scores,
+          answers: finalAnswers,
+          completedAt: new Date().toISOString(),
+          language: 'ja'
+        };
+        
+        localStorage.setItem(`mbti-result-${mbtiType}`, JSON.stringify(resultData));
+        
         // 安定したナビゲーションのための追加遅延
         await new Promise(resolve => setTimeout(resolve, 200));
         
