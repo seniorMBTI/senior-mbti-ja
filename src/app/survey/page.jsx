@@ -302,6 +302,9 @@ export default function SurveyPage() {
     setIsSubmitting(true);
     
     try {
+      // 状態更新完了のための短い遅延
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       // MBTIタイプを計算
       const scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
       
@@ -315,25 +318,19 @@ export default function SurveyPage() {
         (scores.T > scores.F ? 'T' : 'F') +
         (scores.J > scores.P ? 'J' : 'P');
 
-      // 結果IDを生成
-      const resultId = Date.now().toString();
+      // MBTIタイプの有効性検証
+      const validTypes = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 
+                         'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
       
-      // localStorageに保存
-      const resultData = {
-        mbtiType,
-        scores,
-        answers: finalAnswers,
-        completedAt: new Date().toISOString(),
-        language: 'ja'
-      };
-      
-      localStorage.setItem(`mbti-result-${resultId}`, JSON.stringify(resultData));
-      
-      // 2秒後に自動的に結果ページにリダイレクト
-      setTimeout(() => {
-        router.push(`/result/${resultId}`);
-      }, 2000);
-      
+      if (validTypes.includes(mbtiType)) {
+        // 安定したナビゲーションのための追加遅延
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // replaceを使用して戻るボタンの問題を防止
+        router.replace(`/result/${mbtiType.toLowerCase()}`);
+      } else {
+        throw new Error(`Invalid MBTI type calculated: ${mbtiType}`);
+      }
     } catch (error) {
       console.error('Error calculating results:', error);
       alert('結果計算でエラーが発生しました。再試行してください。');
