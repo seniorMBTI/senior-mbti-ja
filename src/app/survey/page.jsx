@@ -266,12 +266,12 @@ export default function SurveyPage() {
       console.log(`Current Question: ${currentQuestion + 1}, Total Questions: ${questions.length}`);
       console.log(`New Answers Length: ${newAnswers.length}`);
 
-      if (currentQuestion === questions.length - 1) {
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
         // テスト完了、結果を計算
         console.log('Last question completed, calling calculateAndRedirect with answers:', newAnswers);
         calculateAndRedirect(newAnswers);
-      } else {
-        setCurrentQuestion(currentQuestion + 1);
       }
     }
   };
