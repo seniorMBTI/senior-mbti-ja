@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import Head from 'next/head';
 
 // MBTIタイプ別相性情報
 const mbtiCompatibility = {
@@ -474,17 +473,6 @@ export default function ResultPage() {
 
   return (
     <>
-      <Head>
-        <meta property="og:title" content="シニアMBTIテスト結果 - 性格タイプ分析" />
-        <meta property="og:description" content="シニア向けMBTIテストで性格タイプを発見しましょう。黄金期のためのパーソナライズされたインサイトを提供します。" />
-        <meta property="og:image" content="https://senior-mbti-40czjfmbw-seniormbtis-projects.vercel.app/jp.png" />
-        <meta property="og:url" content="https://senior-mbti-40czjfmbw-seniormbtis-projects.vercel.app" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="シニアMBTIテスト結果 - 性格タイプ分析" />
-        <meta name="twitter:description" content="シニア向けMBTIテストで性格タイプを発見しましょう。黄金期のためのパーソナライズされたインサイトを提供します。" />
-        <meta name="twitter:image" content="https://senior-mbti-40czjfmbw-seniormbtis-projects.vercel.app/jp.png" />
-      </Head>
       <div className="result-container">
       {/* ヒーローセクション */}
       <div className="hero-section">
