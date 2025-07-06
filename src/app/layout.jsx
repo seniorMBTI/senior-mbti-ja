@@ -25,7 +25,7 @@ export const metadata = {
     siteName: 'シニアMBTI - 中高年向け性格診断',
     images: [
       {
-        url: 'https://senior-mbti-ja.vercel.app/og-landing.png',
+        url: '/jp.png',
         width: 1200,
         height: 630,
         alt: 'シニアMBTI - 中高年・高齢者向けMBTI性格診断テスト'
@@ -36,7 +36,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'シニアMBTI - 中高年向け性格診断テスト',
     description: 'シニア世代専用のMBTI性格診断。50代、60代、70代以上の方のための性格分析と相性診断。',
-    images: ['https://senior-mbti-ja.vercel.app/og-landing.png'],
+    images: ['/jp.png'],
     creator: '@seniormbtijp'
   },
   alternates: {

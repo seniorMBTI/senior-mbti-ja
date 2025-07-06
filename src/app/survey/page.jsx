@@ -353,11 +353,18 @@ export default function SurveyPage() {
         
         console.log('About to redirect to:', `/result/${mbtiType.toLowerCase()}`);
         
-        // 安定したナビゲーションのための追加遅延
-        await new Promise(resolve => setTimeout(resolve, 300));
+        // 完了メッセージ表示後の自動リダイレクト（2秒）
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
-        // window.locationを使用してより信頼性の高いリダイレクト
-        window.location.href = `/result/${mbtiType.toLowerCase()}`;
+        // Next.js routerを使用した信頼性の高いリダイレクト
+        router.push(`/result/${mbtiType.toLowerCase()}`);
+        
+        // バックアップリダイレクト（router.push失敗時）
+        setTimeout(() => {
+          if (typeof window !== 'undefined') {
+            window.location.href = `/result/${mbtiType.toLowerCase()}`;
+          }
+        }, 500);
         
       } else {
         throw new Error(`Invalid MBTI type calculated: ${mbtiType}`);
