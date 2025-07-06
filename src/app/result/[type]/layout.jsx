@@ -52,7 +52,7 @@ export async function generateMetadata({ params }) {
       description: `${resultId} 性格タイプ詳細分析結果。相性の良いMBTIタイプと努力が必要なMBTIタイプを確認し、有意義な関係を築きましょう。`,
       type: 'website',
       locale: 'ja_JP',
-      url: `https://senior-mbti-nkth90d1y-seniormbtis-projects.vercel.app/result/${resultId}`,
+      url: `https://jp.seniormbti.com/result/${resultId}`,
       siteName: 'シニアMBTI',
       images: [
         {
@@ -115,7 +115,7 @@ export default function ResultLayout({ children, params }) {
             "provider": {
               "@type": "Organization",
               "name": "シニアMBTI専門研究チーム",
-              "url": "https://senior-mbti-nkth90d1y-seniormbtis-projects.vercel.app"
+              "url": "https://jp.seniormbti.com"
             },
             "datePublished": new Date().toISOString(),
             "inLanguage": "ja-JP",
@@ -136,19 +136,19 @@ export default function ResultLayout({ children, params }) {
                 "@type": "ListItem",
                 "position": 1,
                 "name": "シニアMBTIホーム",
-                "item": "https://senior-mbti-nkth90d1y-seniormbtis-projects.vercel.app"
+                "item": "https://jp.seniormbti.com"
               },
               {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "性格テストアンケート調査",
-                "item": "https://senior-mbti-nkth90d1y-seniormbtis-projects.vercel.app/survey"
+                "item": "https://jp.seniormbti.com/survey"
               },
               {
                 "@type": "ListItem",
                 "position": 3,
                 "name": `${resultId} タイプ結果`,
-                "item": `https://senior-mbti-nkth90d1y-seniormbtis-projects.vercel.app/result/${resultId.toLowerCase()}`
+                "item": `https://jp.seniormbti.com/result/${resultId.toLowerCase()}`
               }
             ]
           })

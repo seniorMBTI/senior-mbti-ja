@@ -21,7 +21,7 @@ export const metadata = {
     description: 'シニア世代（中高年・高齢者）専用のMBTI性格診断テスト。退職後の人生設計、趣味仲間探し、パートナーとの相性診断に最適。',
     type: 'website',
     locale: 'ja_JP',
-    url: 'https://senior-mbti-nkth90d1y-seniormbtis-projects.vercel.app',
+    url: 'https://jp.seniormbti.com',
     siteName: 'シニアMBTI - 中高年向け性格診断',
     images: [
       {
@@ -40,9 +40,9 @@ export const metadata = {
     creator: '@seniormbtijp'
   },
   alternates: {
-    canonical: 'https://senior-mbti-nkth90d1y-seniormbtis-projects.vercel.app',
+    canonical: 'https://jp.seniormbti.com',
     languages: {
-      'ja-JP': 'https://senior-mbti-nkth90d1y-seniormbtis-projects.vercel.app',
+      'ja-JP': 'https://jp.seniormbti.com',
       'ko-KR': 'https://seniormbtis-projects.vercel.app',
       'en-US': 'https://senior-mbti-en.vercel.app',
       'zh-CN': 'https://senior-mbti-k71r0f94e-seniormbtis-projects.vercel.app',
@@ -73,7 +73,7 @@ export default function RootLayout({ children }) {
     '@type': 'WebApplication',
     name: 'シニアMBTI - 中高年向け性格診断テスト',
     description: 'シニア世代（50代、60代、70代以上）専用のMBTI性格診断テスト。16タイプの性格分析で退職後の人生設計をサポート。',
-    url: 'https://senior-mbti-nkth90d1y-seniormbtis-projects.vercel.app',
+    url: 'https://jp.seniormbti.com',
     applicationCategory: 'LifestyleApplication',
     operatingSystem: 'All',
     offers: {
@@ -155,11 +155,11 @@ export default function RootLayout({ children }) {
         <meta name="rating" content="general" />
         
         {/* 다국어 SEO 최적화 */}
-        <link rel="alternate" hrefLang="ja" href="https://senior-mbti-nkth90d1y-seniormbtis-projects.vercel.app" />
-        <link rel="alternate" hrefLang="ko" href="https://seniormbtis-projects.vercel.app" />
-        <link rel="alternate" hrefLang="en" href="https://senior-mbti-en.vercel.app" />
-        <link rel="alternate" hrefLang="zh" href="https://senior-mbti-k71r0f94e-seniormbtis-projects.vercel.app" />
-        <link rel="alternate" hrefLang="x-default" href="https://seniormbtis-projects.vercel.app" />
+        <link rel="alternate" hrefLang="ja" href="https://jp.seniormbti.com" />
+        <link rel="alternate" hrefLang="ko" href="https://kr.seniormbti.com" />
+        <link rel="alternate" hrefLang="en" href="https://seniormbti.com" />
+        <link rel="alternate" hrefLang="zh" href="https://cn.seniormbti.com" />
+        <link rel="alternate" hrefLang="x-default" href="https://seniormbti.com" />
         
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
