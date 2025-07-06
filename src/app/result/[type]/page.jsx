@@ -304,42 +304,56 @@ const mbtiTypes = {
 export default function ResultPage() {
   const params = useParams();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
   const [resultData, setResultData] = useState(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showCopySuccess, setShowCopySuccess] = useState(false);
   const shareButtonRef = useRef(null);
   const [modalPosition, setModalPosition] = useState({ top: '50%', left: '50%' });
 
+  // サーバーサイド対応のデータ処理
   useEffect(() => {
-    setMounted(true);
-    
     // URLパラメータから直接MBTIタイプを取得
     const mbtiType = params.type?.toUpperCase();
     
-    if (mbtiType && typeof window !== 'undefined') {
+    if (mbtiType) {
       // 有効なMBTIタイプかチェック
       const validTypes = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 
                          'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
       
       if (validTypes.includes(mbtiType)) {
+        // localStorageから既存の結果をチェック（クライアントサイドのみ）
+        let storedResult = null;
+        try {
+          if (typeof window !== 'undefined') {
+            storedResult = localStorage.getItem(`mbti-result-${mbtiType}`);
+            if (storedResult) {
+              storedResult = JSON.parse(storedResult);
+            }
+          }
+        } catch (error) {
+          console.warn('Error reading localStorage:', error);
+        }
+        
         // MBTIタイプパラメータから結果データを生成
-        const resultData = {
+        setResultData({
           mbtiType: mbtiType,
-          timestamp: Date.now(),
-          isDirectLink: true
-        };
-        setResultData(resultData);
+          timestamp: storedResult?.timestamp || Date.now(),
+          isDirectLink: true,
+          scores: storedResult?.scores || null,
+          answers: storedResult?.answers || null
+        });
       } else {
         // 無効なMBTIタイプの場合はホームにリダイレクト
         router.push('/');
       }
+    } else {
+      router.push('/');
     }
   }, [params.type, router]);
 
-  // MBTI結果に基づく動的メタタグ更新
+  // クライアントサイドメタタグ更新（サーバーサイド対応）
   useEffect(() => {
-    if (resultData && mounted) {
+    if (resultData && typeof window !== 'undefined') {
       const mbtiType = resultData.mbtiType;
       const mbtiInfo = mbtiTypes[mbtiType];
       
@@ -347,28 +361,36 @@ export default function ResultPage() {
         // ページタイトル更新
         document.title = `${mbtiType} ${mbtiInfo.title} - シニアMBTI結果`;
         
-        // オープングラフメタタグ更新
+        // メタタグ更新関数
         const updateMetaTag = (property, content) => {
-          let meta = document.querySelector(`meta[property="${property}"]`);
-          if (!meta) {
-            meta = document.createElement('meta');
-            meta.setAttribute('property', property);
-            document.head.appendChild(meta);
+          try {
+            let meta = document.querySelector(`meta[property="${property}"]`);
+            if (!meta) {
+              meta = document.createElement('meta');
+              meta.setAttribute('property', property);
+              document.head.appendChild(meta);
+            }
+            meta.setAttribute('content', content);
+          } catch (error) {
+            console.warn('Meta tag update failed:', error);
           }
-          meta.setAttribute('content', content);
         };
 
         const updateNameMetaTag = (name, content) => {
-          let meta = document.querySelector(`meta[name="${name}"]`);
-          if (!meta) {
-            meta = document.createElement('meta');
-            meta.setAttribute('name', name);
-            document.head.appendChild(meta);
+          try {
+            let meta = document.querySelector(`meta[name="${name}"]`);
+            if (!meta) {
+              meta = document.createElement('meta');
+              meta.setAttribute('name', name);
+              document.head.appendChild(meta);
+            }
+            meta.setAttribute('content', content);
+          } catch (error) {
+            console.warn('Name meta tag update failed:', error);
           }
-          meta.setAttribute('content', content);
         };
 
-        // MBTIタイプ専用画像でメタタグ更新 (本番ドメイン使用)
+        // MBTIタイプ専用コンテンツでメタタグ更新
         updateMetaTag('og:title', `${mbtiType} ${mbtiInfo.title} - シニアMBTI結果`);
         updateMetaTag('og:description', `あなたのMBTIは${mbtiType} ${mbtiInfo.title}です。${mbtiInfo.subtitle} ${mbtiInfo.description.substring(0, 100)}...`);
         updateMetaTag('og:image', `https://jp.seniormbti.com/${mbtiType}-jp.png`);
@@ -382,7 +404,7 @@ export default function ResultPage() {
         updateNameMetaTag('twitter:card', 'summary_large_image');
       }
     }
-  }, [resultData, mounted]);
+  }, [resultData]);
 
   const handleShareClick = () => {
     if (shareButtonRef.current) {
@@ -421,7 +443,7 @@ export default function ResultPage() {
   };
 
   const copyResultLink = () => {
-    if (mounted && typeof window !== 'undefined' && resultData) {
+    if (typeof window !== 'undefined' && resultData) {
       // クリーンなMBTIタイプURLで共有
       const shareUrl = `${window.location.origin}/result/${resultData.mbtiType.toLowerCase()}`;
       navigator.clipboard.writeText(shareUrl);
@@ -433,7 +455,7 @@ export default function ResultPage() {
     }
   };
 
-  if (!mounted || !resultData) {
+  if (!resultData) {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
