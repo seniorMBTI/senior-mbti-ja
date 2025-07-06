@@ -39,7 +39,7 @@ const mbtiDescriptions = {
 };
 
 export async function generateMetadata({ params }) {
-  const resultId = params.id.toUpperCase();
+  const resultId = params.type.toUpperCase();
   const keywords = mbtiKeywords[resultId] || `${resultId}, MBTI結果, シニアMBTI, 性格タイプ, MBTI相性, 黄金期`;
   const description = mbtiDescriptions[resultId] || `${resultId} 性格タイプの詳細な分析結果です。相性の良いMBTIタイプと努力が必要なMBTIタイプを確認し、これからの人生での理想的なパートナーを見つけましょう。`;
   
@@ -84,7 +84,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default function ResultLayout({ children, params }) {
-  const resultId = params.id.toUpperCase();
+  const resultId = params.type.toUpperCase();
   
   return (
     <>
