@@ -491,7 +491,8 @@ export default function ResultPage() {
     );
   }
 
-  const typeInfo = mbtiTypes[resultData?.mbtiType] || mbtiTypes['INTJ'];
+  const mbtiTypeFromUrl = params.type?.toUpperCase();
+  const typeInfo = mbtiTypes[mbtiTypeFromUrl] || mbtiTypes[resultData?.mbtiType] || mbtiTypes['INTJ'];
 
   return (
     <>
@@ -602,11 +603,11 @@ export default function ResultPage() {
               <p>深いつながりを築きやすいタイプ</p>
             </div>
             <div className="compatibility-types">
-              {resultData?.mbtiType && mbtiCompatibility[resultData.mbtiType]?.bestMatch.map((type, index) => (
+              {typeInfo?.type && mbtiCompatibility[typeInfo.type]?.bestMatch?.map((type, index) => (
                 <div key={index} className="compatibility-type best">
                   {type}
                 </div>
-              ))}
+              )) || []}
             </div>
           </div>
 
@@ -616,11 +617,11 @@ export default function ResultPage() {
               <p>調和良く過ごせるタイプ</p>
             </div>
             <div className="compatibility-types">
-              {resultData?.mbtiType && mbtiCompatibility[resultData.mbtiType]?.goodMatch.map((type, index) => (
+              {typeInfo?.type && mbtiCompatibility[typeInfo.type]?.goodMatch?.map((type, index) => (
                 <div key={index} className="compatibility-type good">
                   {type}
                 </div>
-              ))}
+              )) || []}
             </div>
           </div>
 
@@ -630,11 +631,11 @@ export default function ResultPage() {
               <p>調和を保つために多大な努力と理解が必要なタイプ</p>
             </div>
             <div className="compatibility-types">
-              {resultData?.mbtiType && mbtiCompatibility[resultData.mbtiType]?.challengingMatch.map((type, index) => (
+              {typeInfo?.type && mbtiCompatibility[typeInfo.type]?.challengingMatch?.map((type, index) => (
                 <div key={index} className="compatibility-type challenging">
                   {type}
                 </div>
-              ))}
+              )) || []}
             </div>
           </div>
         </div>
