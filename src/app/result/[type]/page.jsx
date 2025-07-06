@@ -580,7 +580,7 @@ export default function ResultPage() {
               <p>深いつながりを築きやすいタイプ</p>
             </div>
             <div className="compatibility-types">
-              {mbtiCompatibility[resultData.mbtiType]?.bestMatch.map((type, index) => (
+              {resultData?.mbtiType && mbtiCompatibility[resultData.mbtiType]?.bestMatch.map((type, index) => (
                 <div key={index} className="compatibility-type best">
                   {type}
                 </div>
@@ -594,7 +594,7 @@ export default function ResultPage() {
               <p>調和良く過ごせるタイプ</p>
             </div>
             <div className="compatibility-types">
-              {mbtiCompatibility[resultData.mbtiType]?.goodMatch.map((type, index) => (
+              {resultData?.mbtiType && mbtiCompatibility[resultData.mbtiType]?.goodMatch.map((type, index) => (
                 <div key={index} className="compatibility-type good">
                   {type}
                 </div>
@@ -608,7 +608,7 @@ export default function ResultPage() {
               <p>調和を保つために多大な努力と理解が必要なタイプ</p>
             </div>
             <div className="compatibility-types">
-              {mbtiCompatibility[resultData.mbtiType]?.challengingMatch.map((type, index) => (
+              {resultData?.mbtiType && mbtiCompatibility[resultData.mbtiType]?.challengingMatch.map((type, index) => (
                 <div key={index} className="compatibility-type challenging">
                   {type}
                 </div>
