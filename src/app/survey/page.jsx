@@ -307,9 +307,11 @@ export default function SurveyPage() {
     setIsSubmitting(true);
     
     try {
-      // 状態更新完了のための短い遅延
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      // クライアントサイドでのみ実行されることを保証
+      if (typeof window === 'undefined') {
+        throw new Error('Client-side only function called on server');
+      }
+
       // MBTIタイプを計算
       const scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
       
@@ -332,31 +334,46 @@ export default function SurveyPage() {
                          'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
       
       if (validTypes.includes(mbtiType)) {
-        // localStorageに保存（バックアップ用）
-        const resultData = {
-          mbtiType,
-          scores,
-          answers: finalAnswers,
-          completedAt: new Date().toISOString(),
-          language: 'ja'
-        };
-        
-        localStorage.setItem(`mbti-result-${mbtiType}`, JSON.stringify(resultData));
+        // localStorageに安全に保存
+        try {
+          const resultData = {
+            mbtiType,
+            scores,
+            answers: finalAnswers,
+            completedAt: new Date().toISOString(),
+            language: 'ja'
+          };
+          
+          localStorage.setItem(`mbti-result-${mbtiType}`, JSON.stringify(resultData));
+          console.log('Result data saved to localStorage');
+        } catch (storageError) {
+          console.warn('Failed to save to localStorage:', storageError);
+          // localStorageが失敗しても続行
+        }
         
         console.log('About to redirect to:', `/result/${mbtiType.toLowerCase()}`);
         
         // 安定したナビゲーションのための追加遅延
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 300));
         
-        // replaceを使用して戻るボタンの問題を防止
-        router.replace(`/result/${mbtiType.toLowerCase()}`);
+        // window.locationを使用してより信頼性の高いリダイレクト
+        window.location.href = `/result/${mbtiType.toLowerCase()}`;
+        
       } else {
         throw new Error(`Invalid MBTI type calculated: ${mbtiType}`);
       }
+      
     } catch (error) {
       console.error('Error calculating results:', error);
       alert('結果計算でエラーが発生しました。再試行してください。');
       setIsSubmitting(false);
+      
+      // エラー時にホームへリダイレクト
+      if (typeof window !== 'undefined') {
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 2000);
+      }
     }
   };
 
