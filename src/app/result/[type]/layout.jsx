@@ -56,7 +56,7 @@ export async function generateMetadata({ params }) {
       siteName: 'シニアMBTI',
       images: [
         {
-          url: `/${resultId}-jp.png`,
+          url: `https://jp.seniormbti.com/${resultId}-jp.png`,
           width: 1200,
           height: 630,
           alt: `${resultId} 性格タイプ結果 - シニアMBTI`
@@ -67,7 +67,7 @@ export async function generateMetadata({ params }) {
       card: 'summary_large_image',
       title: `シニアMBTI結果 - ${resultId} タイプ`,
       description: `${resultId} 性格タイプ詳細分析結果。相性の良いMBTIタイプと努力が必要なMBTIタイプを確認し、有意義な関係を築きましょう。`,
-      images: [`/${resultId}-jp.png`]
+      images: [`https://jp.seniormbti.com/${resultId}-jp.png`]
     },
     robots: {
       index: true,
